@@ -1,6 +1,6 @@
 @Suppress("MemberVisibilityCanBePrivate", "unused")
 object AppConfig {
-    const val BASE_PACKAGE = "com.solovocal"
+    const val BASE_PACKAGE = "com.studystream"
 
     val APPLICATION_ID = buildGroup("app")
     const val VERSION_CODE = 1
