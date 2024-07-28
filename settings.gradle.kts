@@ -1,4 +1,4 @@
-rootProject.name = "com.solovocal.app"
+rootProject.name = "com.studystream.app"
 
 pluginManagement {
     repositories {
@@ -32,3 +32,5 @@ include(":server:plugin:sockets")
 include(":server:shared:feature")
 include(":server:shared:security")
 include(":server:shared:socket")
+
+include(":server:feature:auth")

@@ -2,7 +2,7 @@ ktor:
   development: true
   application:
     modules:
-      - com.solovocal.app.ApplicationKt.module
+      - com.studystream.app.ApplicationKt.module
   deployment:
     port: "$PORT:8080"
     watch:

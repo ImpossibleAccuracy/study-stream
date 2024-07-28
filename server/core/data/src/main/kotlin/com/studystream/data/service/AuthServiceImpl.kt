@@ -1,18 +1,23 @@
 package com.studystream.data.service
 
+import com.studystream.domain.exception.OperationRejectedException
+import com.studystream.domain.exception.ResourceNotFoundException
 import com.studystream.domain.model.Account
+import com.studystream.domain.service.AccountService
 import com.studystream.domain.service.AuthService
 
-class AuthServiceImpl : AuthService {
-    override suspend fun authUser(email: String, password: String): Result<Account> = kotlin.runCatching {
-        Account(
-            email,
-        )
-    }
+class AuthServiceImpl(
+    private val accountService: AccountService,
+    private val passwordManager: PasswordManager,
+) : AuthService {
+    override suspend fun signIn(email: String, password: String): Result<Account> = runCatching {
+        val account = accountService.findUser(email)
+            ?: throw ResourceNotFoundException("Account not found")
 
-    override suspend fun findUser(email: String): Account? {
-        return Account(
-            email
-        )
+        if (!passwordManager.match(password, account.password)) {
+            throw OperationRejectedException("Password mismatch")
+        }
+
+        return@runCatching account
     }
 }

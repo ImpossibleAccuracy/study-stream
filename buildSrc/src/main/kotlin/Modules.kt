@@ -32,6 +32,8 @@ object Modules {
 
         object Feature {
             private const val Base = "${Server.Base}:feature"
+
+            const val Auth = "$Base:auth"
         }
     }
 }
