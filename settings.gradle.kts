@@ -32,5 +32,3 @@ include(":server:plugin:sockets")
 include(":server:shared:feature")
 include(":server:shared:security")
 include(":server:shared:socket")
-
-include(":server:feature:auth")
