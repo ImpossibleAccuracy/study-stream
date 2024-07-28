@@ -7,8 +7,14 @@ import kotlinx.serialization.Serializable
 @Resource("/auth")
 class AuthRoute {
     @Serializable
-    @Resource("/signIn")
+    @Resource("/signin")
     class SignInRoute(
+        @Suppress("unused") val parent: AuthRoute = AuthRoute()
+    )
+
+    @Serializable
+    @Resource("/signup")
+    class SignUpRoute(
         @Suppress("unused") val parent: AuthRoute = AuthRoute()
     )
 }

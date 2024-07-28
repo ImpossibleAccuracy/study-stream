@@ -4,7 +4,7 @@ import com.studystream.domain.service.AuthService
 import com.studystream.domain.service.TokenService
 import com.studystream.feature.auth.AuthRoute
 import com.studystream.feature.auth.payload.AuthResponse
-import com.studystream.feature.auth.payload.SignInRequest
+import com.studystream.feature.auth.payload.SignUpRequest
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.resources.*
@@ -12,9 +12,9 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.Routing
 import org.koin.ktor.ext.get
 
-internal fun Routing.installSignInRoute() {
-    post<AuthRoute.SignInRoute> {
-        val result = signInRoute(
+internal fun Routing.installSignUpRoute() {
+    post<AuthRoute.SignUpRoute> {
+        val result = signUpRoute(
             body = call.receive(),
             authService = call.get<AuthService>(),
             tokenService = call.get<TokenService>(),
@@ -24,13 +24,13 @@ internal fun Routing.installSignInRoute() {
     }
 }
 
-suspend fun signInRoute(
-    body: SignInRequest,
+suspend fun signUpRoute(
+    body: SignUpRequest,
     authService: AuthService,
     tokenService: TokenService,
 ): AuthResponse {
     val user = authService
-        .signIn(body.email, body.password)
+        .signUp(body.email, body.password)
         .getOrThrow()
 
     return AuthResponse(
