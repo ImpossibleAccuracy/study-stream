@@ -7,6 +7,8 @@ group = AppConfig.buildGroup("plugin", "route")
 version = AppConfig.VERSION_NAME
 
 dependencies {
+    implementation(project(Modules.Server.Domain))
+
     implementation(libs.kotlin.serialization)
 
     implementation(libs.ktor.core)
