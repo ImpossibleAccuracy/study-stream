@@ -1,5 +1,5 @@
 ktor:
-  development: true
+  development: "$DEV:true"
   application:
     modules:
       - com.studystream.app.ApplicationKt.module
@@ -22,3 +22,7 @@ database:
   user: "$DATABASE_USER"
   password: "$DATABASE_PASSWORD"
   poolSize: "$POOL_SIZE:6"
+
+feature:
+  refreshToken:
+    tokenRefreshThreshold: 3600000

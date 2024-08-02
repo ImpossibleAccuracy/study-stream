@@ -17,4 +17,10 @@ class AuthRoute {
     class SignUpRoute(
         @Suppress("unused") val parent: AuthRoute = AuthRoute()
     )
+
+    @Serializable
+    @Resource("/refresh")
+    class RefreshTokenRoute(
+        @Suppress("unused") val parent: AuthRoute = AuthRoute()
+    )
 }
