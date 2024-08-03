@@ -6,7 +6,7 @@ import com.studystream.domain.properties.AppProperties
 import com.studystream.domain.properties.FeatureProperties
 import com.studystream.domain.service.TokenService
 import com.studystream.feature.auth.AuthRoute
-import com.studystream.feature.auth.payload.AuthResponse
+import com.studystream.shared.payload.response.AuthResponse
 import io.ktor.server.application.*
 import io.ktor.server.resources.*
 import io.ktor.server.response.*

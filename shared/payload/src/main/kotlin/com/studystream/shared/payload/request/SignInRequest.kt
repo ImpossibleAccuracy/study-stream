@@ -1,9 +1,9 @@
-package com.studystream.feature.auth.payload
+package com.studystream.shared.payload.request
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class SignUpRequest(
+data class SignInRequest(
     val email: String,
     val password: String,
 )

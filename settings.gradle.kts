@@ -18,6 +18,8 @@ dependencyResolutionManagement {
 }
 
 
+include(":shared:payload")
+
 include(":server:app")
 include(":server:core:data")
 include(":server:core:domain")

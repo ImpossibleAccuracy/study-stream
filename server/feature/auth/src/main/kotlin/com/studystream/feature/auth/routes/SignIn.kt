@@ -3,8 +3,8 @@ package com.studystream.feature.auth.routes
 import com.studystream.domain.service.AuthService
 import com.studystream.domain.service.TokenService
 import com.studystream.feature.auth.AuthRoute
-import com.studystream.feature.auth.payload.AuthResponse
-import com.studystream.feature.auth.payload.SignInRequest
+import com.studystream.shared.payload.response.AuthResponse
+import com.studystream.shared.payload.request.SignInRequest
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.resources.*

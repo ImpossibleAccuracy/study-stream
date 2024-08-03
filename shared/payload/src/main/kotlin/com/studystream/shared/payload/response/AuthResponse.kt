@@ -1,4 +1,4 @@
-package com.studystream.feature.auth.payload
+package com.studystream.shared.payload.response
 
 import kotlinx.serialization.Serializable
 
