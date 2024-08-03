@@ -30,7 +30,7 @@ suspend fun signInRoute(
     tokenService: TokenService,
 ): AuthResponse {
     val user = authService
-        .signIn(body.email, body.password)
+        .signIn(body.username, body.password)
         .getOrThrow()
 
     return AuthResponse(

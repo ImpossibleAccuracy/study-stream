@@ -26,7 +26,7 @@ class AuthRoute {
 
     @Serializable
     @Resource("/me")
-    class GetMeRoute(
+    class MeRoute(
         @Suppress("unused") val parent: AuthRoute = AuthRoute()
     )
 }

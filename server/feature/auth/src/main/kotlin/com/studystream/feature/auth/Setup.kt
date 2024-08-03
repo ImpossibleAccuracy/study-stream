@@ -1,9 +1,6 @@
 package com.studystream.feature.auth
 
-import com.studystream.feature.auth.routes.installGetMeRoute
-import com.studystream.feature.auth.routes.installRefreshToken
-import com.studystream.feature.auth.routes.installSignInRoute
-import com.studystream.feature.auth.routes.installSignUpRoute
+import com.studystream.feature.auth.routes.*
 import io.ktor.server.routing.*
 
 fun Routing.installAuth() {
@@ -11,4 +8,5 @@ fun Routing.installAuth() {
     installSignUpRoute()
     installRefreshToken()
     installGetMeRoute()
+    installUpdateMeRoute()
 }

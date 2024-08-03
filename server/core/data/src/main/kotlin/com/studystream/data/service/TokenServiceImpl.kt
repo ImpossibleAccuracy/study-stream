@@ -30,9 +30,11 @@ class TokenServiceImpl(
             }
         }
 
-        val username = decoded.claims[tokenProperties.claimName]!!.asString()
+        val accountId = decoded.claims[tokenProperties.claimName]!!
+            .asString()
+            .toIntOrNull() ?: throw OperationRejectedException("Invalid token content")
 
-        val account = accountService.findUser(username)
+        val account = accountService.findUser(accountId)
             ?: throw ResourceNotFoundException("User not found")
 
         val newToken = generate(account)
@@ -46,7 +48,7 @@ class TokenServiceImpl(
     override suspend fun generate(account: Account): String = JWT.create()
         .withAudience(tokenProperties.audience)
         .withIssuer(tokenProperties.issuer)
-        .withClaim(tokenProperties.claimName, account.username)
+        .withClaim(tokenProperties.claimName, account.id.toString())
         .withExpiresAt(Date(System.currentTimeMillis() + tokenProperties.ttl))
         .sign(Algorithm.HMAC256(tokenProperties.secret))
 }
