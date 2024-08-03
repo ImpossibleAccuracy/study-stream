@@ -163,54 +163,54 @@ CREATE UNIQUE INDEX `title` ON `event_exception_type` (`title`);
 
 CREATE UNIQUE INDEX `title` ON `schedule_attendee_status` (`title`);
 
-ALTER TABLE `document` ADD FOREIGN KEY (`type_id`) REFERENCES `document_type` (`id`);
+ALTER TABLE `document` ADD FOREIGN KEY (`type_id`) REFERENCES `document_type` (`id`) ON DELETE RESTRICT;
 
-ALTER TABLE `profile` ADD FOREIGN KEY (`account_id`) REFERENCES `account` (`id`);
+ALTER TABLE `profile` ADD FOREIGN KEY (`account_id`) REFERENCES `account` (`id`) ON DELETE CASCADE;
 
-ALTER TABLE `profile` ADD FOREIGN KEY (`avatar_id`) REFERENCES `document` (`id`);
+ALTER TABLE `profile` ADD FOREIGN KEY (`avatar_id`) REFERENCES `document` (`id`) ON DELETE RESTRICT;
 
-ALTER TABLE `role_account` ADD FOREIGN KEY (`role_id`) REFERENCES `role` (`id`);
+ALTER TABLE `role_account` ADD FOREIGN KEY (`role_id`) REFERENCES `role` (`id`) ON DELETE CASCADE;
 
-ALTER TABLE `role_account` ADD FOREIGN KEY (`account_id`) REFERENCES `account` (`id`);
+ALTER TABLE `role_account` ADD FOREIGN KEY (`account_id`) REFERENCES `account` (`id`) ON DELETE CASCADE;
 
-ALTER TABLE `privilege_role` ADD FOREIGN KEY (`role_id`) REFERENCES `role` (`id`);
+ALTER TABLE `privilege_role` ADD FOREIGN KEY (`role_id`) REFERENCES `role` (`id`) ON DELETE CASCADE;
 
-ALTER TABLE `privilege_role` ADD FOREIGN KEY (`privilege_id`) REFERENCES `privilege` (`id`);
+ALTER TABLE `privilege_role` ADD FOREIGN KEY (`privilege_id`) REFERENCES `privilege` (`id`) ON DELETE CASCADE;
 
-ALTER TABLE `device` ADD FOREIGN KEY (`account_id`) REFERENCES `account` (`id`);
+ALTER TABLE `device` ADD FOREIGN KEY (`account_id`) REFERENCES `account` (`id`) ON DELETE CASCADE;
 
-ALTER TABLE `device` ADD FOREIGN KEY (`type_id`) REFERENCES `device_type` (`id`);
+ALTER TABLE `device` ADD FOREIGN KEY (`type_id`) REFERENCES `device_type` (`id`) ON DELETE RESTRICT;
 
-ALTER TABLE `event` ADD FOREIGN KEY (`thumb_id`) REFERENCES `document` (`id`);
+ALTER TABLE `event` ADD FOREIGN KEY (`thumb_id`) REFERENCES `document` (`id`) ON DELETE RESTRICT;
 
-ALTER TABLE `event` ADD FOREIGN KEY (`background_id`) REFERENCES `document` (`id`);
+ALTER TABLE `event` ADD FOREIGN KEY (`background_id`) REFERENCES `document` (`id`) ON DELETE RESTRICT;
 
-ALTER TABLE `schedule` ADD FOREIGN KEY (`creator_id`) REFERENCES `account` (`id`);
+ALTER TABLE `schedule` ADD FOREIGN KEY (`creator_id`) REFERENCES `account` (`id`) ON DELETE RESTRICT;
 
-ALTER TABLE `schedule` ADD FOREIGN KEY (`event_id`) REFERENCES `event` (`id`);
+ALTER TABLE `schedule` ADD FOREIGN KEY (`event_id`) REFERENCES `event` (`id`) ON DELETE CASCADE;
 
-ALTER TABLE `schedule` ADD FOREIGN KEY (`status_id`) REFERENCES `schedule_status` (`id`);
+ALTER TABLE `schedule` ADD FOREIGN KEY (`status_id`) REFERENCES `schedule_status` (`id`) ON DELETE RESTRICT;
 
-ALTER TABLE `event_exception` ADD FOREIGN KEY (`creator_id`) REFERENCES `account` (`id`);
+ALTER TABLE `event_exception` ADD FOREIGN KEY (`creator_id`) REFERENCES `account` (`id`) ON DELETE RESTRICT;
 
-ALTER TABLE `event_exception` ADD FOREIGN KEY (`event_id`) REFERENCES `event` (`id`);
+ALTER TABLE `event_exception` ADD FOREIGN KEY (`event_id`) REFERENCES `event` (`id`) ON DELETE RESTRICT;
 
-ALTER TABLE `event_exception` ADD FOREIGN KEY (`type_id`) REFERENCES `event_exception_type` (`id`);
+ALTER TABLE `event_exception` ADD FOREIGN KEY (`type_id`) REFERENCES `event_exception_type` (`id`) ON DELETE RESTRICT;
 
-ALTER TABLE `ticket_type` ADD FOREIGN KEY (`creator_id`) REFERENCES `account` (`id`);
+ALTER TABLE `ticket_type` ADD FOREIGN KEY (`creator_id`) REFERENCES `account` (`id`) ON DELETE RESTRICT;
 
-ALTER TABLE `ticket` ADD FOREIGN KEY (`creator_id`) REFERENCES `account` (`id`);
+ALTER TABLE `ticket` ADD FOREIGN KEY (`creator_id`) REFERENCES `account` (`id`) ON DELETE CASCADE;
 
-ALTER TABLE `ticket` ADD FOREIGN KEY (`profile_id`) REFERENCES `profile` (`id`);
+ALTER TABLE `ticket` ADD FOREIGN KEY (`profile_id`) REFERENCES `profile` (`id`) ON DELETE CASCADE;
 
-ALTER TABLE `ticket` ADD FOREIGN KEY (`type_id`) REFERENCES `ticket_type` (`id`);
+ALTER TABLE `ticket` ADD FOREIGN KEY (`type_id`) REFERENCES `ticket_type` (`id`) ON DELETE RESTRICT;
 
-ALTER TABLE `schedule_attendee` ADD FOREIGN KEY (`schedule_id`) REFERENCES `schedule` (`id`);
+ALTER TABLE `schedule_attendee` ADD FOREIGN KEY (`schedule_id`) REFERENCES `schedule` (`id`) ON DELETE RESTRICT;
 
-ALTER TABLE `schedule_attendee` ADD FOREIGN KEY (`profile_id`) REFERENCES `profile` (`id`);
+ALTER TABLE `schedule_attendee` ADD FOREIGN KEY (`profile_id`) REFERENCES `profile` (`id`) ON DELETE CASCADE;
 
-ALTER TABLE `schedule_attendee` ADD FOREIGN KEY (`creator_id`) REFERENCES `account` (`id`);
+ALTER TABLE `schedule_attendee` ADD FOREIGN KEY (`creator_id`) REFERENCES `account` (`id`) ON DELETE CASCADE;
 
-ALTER TABLE `schedule_attendee` ADD FOREIGN KEY (`ticket_id`) REFERENCES `ticket` (`id`);
+ALTER TABLE `schedule_attendee` ADD FOREIGN KEY (`ticket_id`) REFERENCES `ticket` (`id`) ON DELETE RESTRICT;
 
-ALTER TABLE `schedule_attendee` ADD FOREIGN KEY (`status_id`) REFERENCES `schedule_attendee_status` (`id`);
+ALTER TABLE `schedule_attendee` ADD FOREIGN KEY (`status_id`) REFERENCES `schedule_attendee_status` (`id`) ON DELETE RESTRICT;

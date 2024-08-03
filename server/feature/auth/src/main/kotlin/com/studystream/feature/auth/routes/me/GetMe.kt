@@ -1,4 +1,4 @@
-package com.studystream.feature.auth.routes
+package com.studystream.feature.auth.routes.me
 
 import com.studystream.domain.model.Account
 import com.studystream.feature.auth.AuthRoute

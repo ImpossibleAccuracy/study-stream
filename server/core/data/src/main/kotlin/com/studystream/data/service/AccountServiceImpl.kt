@@ -7,6 +7,8 @@ import com.studystream.data.database.utils.runSuspendedTransaction
 import com.studystream.data.mapper.toDomain
 import com.studystream.domain.model.Account
 import com.studystream.domain.service.AccountService
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.update
 
 class AccountServiceImpl : AccountService {
@@ -31,5 +33,11 @@ class AccountServiceImpl : AccountService {
             }
 
         AccountDao[id].toDomain()
+    }
+
+    override suspend fun deleteUser(id: Int): Result<Unit> = runCatchingTransaction {
+        AccountTable.deleteWhere {
+            this@deleteWhere.id eq id
+        }
     }
 }
