@@ -1,5 +1,7 @@
 package com.studystream.domain.model
 
 data class Account(
-    val email: String,
+    val id: Int,
+    val username: String,
+    val password: String,
 )

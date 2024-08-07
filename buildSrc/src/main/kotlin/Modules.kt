@@ -2,6 +2,8 @@
 object Modules {
     object Shared {
         private const val Base = ":shared"
+
+        const val Payload = "$Base:payload"
     }
 
     object Server {
@@ -32,6 +34,8 @@ object Modules {
 
         object Feature {
             private const val Base = "${Server.Base}:feature"
+
+            const val Auth = "$Base:auth"
         }
     }
 }

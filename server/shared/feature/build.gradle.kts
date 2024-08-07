@@ -6,6 +6,9 @@ group = AppConfig.buildGroup("shared", "feature")
 version = AppConfig.VERSION_NAME
 
 dependencies {
+    api(project(Modules.Shared.Payload))
+    api(project(Modules.Server.Domain))
+
     implementation(libs.kotlin.datetime)
     implementation(libs.kotlin.collections)
     implementation(libs.kotlin.serialization)

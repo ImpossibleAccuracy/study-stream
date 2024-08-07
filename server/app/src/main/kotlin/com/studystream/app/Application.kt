@@ -24,7 +24,7 @@ fun Application.module() {
     configureSerialization()
     configureSecurity(
         tokenProperties = properties.token,
-        authService = get()
+        accountService = get()
     )
     configureSockets()
     configureRouting()

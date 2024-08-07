@@ -34,4 +34,6 @@ dependencies {
 
     implementation(libs.koin.logger)
     implementation(libs.koin.ktor)
+
+    implementation(project(Modules.Server.Feature.Auth))
 }

@@ -1,33 +1,43 @@
 package com.studystream.data.service
 
-import com.studystream.data.database.dao.UserDao
+import com.studystream.data.database.dao.AccountDao
+import com.studystream.data.database.tables.AccountTable
+import com.studystream.data.database.utils.runCatchingTransaction
+import com.studystream.data.database.utils.runSuspendedTransaction
+import com.studystream.data.mapper.toDomain
 import com.studystream.domain.model.Account
 import com.studystream.domain.service.AccountService
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.launch
-import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.update
 
 class AccountServiceImpl : AccountService {
-    private val _accounts = MutableStateFlow<List<Account>>(listOf())
-    override val accounts: Flow<List<Account>> = _accounts.filterNotNull()
-
-    init {
-        GlobalScope.launch(Dispatchers.IO) {
-            transaction {
-                _accounts.value = UserDao.all().map {
-                    Account(
-                        email = it.name
-                    )
-                }
-            }
-        }
+    override suspend fun findUser(id: Int): Account? = runSuspendedTransaction {
+        AccountDao.findById(id)?.toDomain()
     }
 
-    override suspend fun updateAccount(account: Account) {
-        _accounts.value = _accounts.value.plus(account)
+    override suspend fun findUser(username: String): Account? = runSuspendedTransaction {
+        AccountDao.find { AccountTable.username eq username }
+            .firstOrNull()
+            ?.toDomain()
+    }
+
+    override suspend fun updateUser(id: Int, username: String): Result<Account> = runCatchingTransaction {
+        AccountTable
+            .update(
+                where = {
+                    AccountTable.id eq id
+                }
+            ) {
+                it[AccountTable.username] = username
+            }
+
+        AccountDao[id].toDomain()
+    }
+
+    override suspend fun deleteUser(id: Int): Result<Unit> = runCatchingTransaction {
+        AccountTable.deleteWhere {
+            this@deleteWhere.id eq id
+        }
     }
 }

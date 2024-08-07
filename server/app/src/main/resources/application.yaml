@@ -1,8 +1,8 @@
 ktor:
-  development: true
+  development: "$DEV:true"
   application:
     modules:
-      - com.solovocal.app.ApplicationKt.module
+      - com.studystream.app.ApplicationKt.module
   deployment:
     port: "$PORT:8080"
     watch:
@@ -22,3 +22,7 @@ database:
   user: "$DATABASE_USER"
   password: "$DATABASE_PASSWORD"
   poolSize: "$POOL_SIZE:6"
+
+feature:
+  refreshToken:
+    tokenRefreshThreshold: 3600000
