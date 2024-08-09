@@ -3,8 +3,8 @@ package com.studystream.feature.auth.routes
 import com.studystream.domain.service.AuthService
 import com.studystream.domain.service.TokenService
 import com.studystream.feature.auth.AuthRoute
-import com.studystream.shared.payload.response.AuthResponse
 import com.studystream.shared.payload.request.SignInRequest
+import com.studystream.shared.payload.response.AuthResponse
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.resources.*
@@ -16,8 +16,8 @@ internal fun Routing.installSignInRoute() {
     post<AuthRoute.SignInRoute> {
         val result = signInRoute(
             body = call.receive(),
-            authService = call.get<AuthService>(),
-            tokenService = call.get<TokenService>(),
+            authService = call.get(),
+            tokenService = call.get(),
         )
 
         call.respond(result)

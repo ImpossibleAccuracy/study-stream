@@ -36,4 +36,5 @@ dependencies {
     implementation(libs.koin.ktor)
 
     implementation(project(Modules.Server.Feature.Auth))
+    implementation(project(Modules.Server.Feature.FileStorage))
 }
