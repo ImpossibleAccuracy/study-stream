@@ -1,19 +1,19 @@
 package com.studystream.app.domain.model
 
-import kotlinx.datetime.Clock.System.now
-import kotlinx.datetime.Instant
+import com.studystream.app.data.database.dao.DocumentTypeDao
+import com.studystream.app.data.database.tables.DocumentTable
+import com.studystream.app.data.database.tables.DocumentTypeTable
+import org.jetbrains.exposed.dao.IntEntity
+import org.jetbrains.exposed.dao.id.EntityID
 
-data class Document(
-    val id: Int,
-    var createdAt: Instant = now(),
-    var title: String,
-    var hash: String,
-    var path: String,
-    var type: Type,
-) {
-    data class Type(
-        val id: Int,
-        val title: String,
-        val mimeType: String,
-    )
+class Document(id: EntityID<Int>) : IntEntity(id) {
+    var title: String by DocumentTable.title
+    var hash: String by DocumentTable.hash
+    var path: String by DocumentTable.path
+    var type: Type by DocumentTypeDao referencedOn DocumentTable.type
+
+    class Type(id: EntityID<Int>) : IntEntity(id) {
+        var title: String by DocumentTypeTable.title
+        var mimeType: String by DocumentTypeTable.mimeType
+    }
 }

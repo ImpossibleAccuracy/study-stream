@@ -1,6 +1,8 @@
 package com.studystream.app.data.service
 
 import com.studystream.app.data.utils.ioCall
+import com.studystream.app.data.utils.replace
+import com.studystream.app.data.utils.substring
 import com.studystream.app.domain.exception.ResourceNotFoundException
 import com.studystream.app.domain.model.Document
 import com.studystream.app.domain.model.MultipartFile
@@ -8,8 +10,6 @@ import com.studystream.app.domain.model.StorageCatalog
 import com.studystream.app.domain.properties.feature.FileStorageProperties
 import com.studystream.app.domain.service.DocumentService
 import com.studystream.app.domain.service.FileStorageService
-import com.studystream.app.data.utils.replace
-import com.studystream.app.data.utils.substring
 import io.ktor.util.logging.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -154,13 +154,10 @@ class FileStorageServiceImpl(
             "File \"${file.name}\" moved into $catalog catalog as \"${resultFile.absoluteFile}\""
         )
 
+        document.path = resultPath.absolutePathString()
+
         documentService
-            .update(
-                id = document.id,
-                document = document.copy(
-                    path = resultPath.absolutePathString()
-                )
-            )
+            .update(document)
             .getOrThrow()
     }
 
@@ -168,7 +165,7 @@ class FileStorageServiceImpl(
         val file = Path.of(document.path)
         file.deleteIfExists()
 
-        documentService.delete(document.id)
+        documentService.delete(document.id.value)
             .onSuccess {
                 logger.debug("File \"${file.name}\" deleted")
             }

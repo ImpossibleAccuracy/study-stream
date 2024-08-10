@@ -4,7 +4,6 @@ import com.studystream.app.data.database.dao.AccountDao
 import com.studystream.app.data.database.tables.AccountTable
 import com.studystream.app.data.database.utils.exists
 import com.studystream.app.data.database.utils.runCatchingTransaction
-import com.studystream.app.data.mapper.toDomain
 import com.studystream.app.domain.exception.OperationRejectedException
 import com.studystream.app.domain.exception.ResourceNotFoundException
 import com.studystream.app.domain.model.Account
@@ -34,11 +33,9 @@ class AuthServiceImpl(
 
         val encryptedPassword = passwordManager.encrypt(password)
 
-        AccountDao
-            .new {
-                this.username = username
-                this.password = encryptedPassword
-            }
-            .toDomain()
+        AccountDao.new {
+            this.username = username
+            this.password = encryptedPassword
+        }
     }
 }

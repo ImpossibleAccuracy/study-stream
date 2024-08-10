@@ -5,7 +5,6 @@ import com.studystream.app.data.database.dao.DocumentTypeDao
 import com.studystream.app.data.database.tables.DocumentTable
 import com.studystream.app.data.database.tables.DocumentTypeTable
 import com.studystream.app.data.database.utils.runCatchingTransaction
-import com.studystream.app.data.mapper.toDomain
 import com.studystream.app.domain.model.Document
 import com.studystream.app.domain.service.DocumentService
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -14,9 +13,7 @@ import org.jetbrains.exposed.sql.deleteWhere
 class DocumentServiceImpl : DocumentService {
     override suspend fun findById(id: Int): Result<Document> =
         runCatchingTransaction {
-            DocumentDao
-                .findById(id)!!
-                .toDomain()
+            DocumentDao.findById(id)!!
         }
 
     override suspend fun findByHash(hash: String): Result<Document> =
@@ -26,7 +23,6 @@ class DocumentServiceImpl : DocumentService {
                     DocumentTable.hash eq hash
                 }
                 .first()
-                .toDomain()
         }
 
     override suspend fun findTypeByMimeType(mimeType: String): Result<Document.Type> =
@@ -36,41 +32,34 @@ class DocumentServiceImpl : DocumentService {
                     DocumentTypeTable.mimeType eq mimeType
                 }
                 .first()
-                .toDomain()
         }
 
     override suspend fun save(title: String, hash: String, path: String, type: Document.Type): Result<Document> =
         runCatchingTransaction {
-            DocumentDao
-                .new {
-                    this.title = title
-                    this.hash = hash
-                    this.path = path
-                    this.type = DocumentTypeDao.findById(type.id)!!
-                }
-                .toDomain()
+            DocumentDao.new {
+                this.title = title
+                this.hash = hash
+                this.path = path
+                this.type = DocumentTypeDao.findById(type.id)!!
+            }
         }
 
     override suspend fun saveType(title: String, mimeType: String): Result<Document.Type> =
         runCatchingTransaction {
-            DocumentTypeDao
-                .new {
-                    this.title = title
-                    this.mimeType = mimeType
-                }
-                .toDomain()
+            DocumentTypeDao.new {
+                this.title = title
+                this.mimeType = mimeType
+            }
         }
 
-    override suspend fun update(id: Int, document: Document): Result<Document> =
+    override suspend fun update(document: Document): Result<Document> =
         runCatchingTransaction {
-            DocumentDao
-                .findByIdAndUpdate(id) {
-                    it.title = document.title
-                    it.hash = document.hash
-                    it.path = document.path
-                    it.type = DocumentTypeDao.findById(document.type.id)!!
-                }!!
-                .toDomain()
+            DocumentDao.findByIdAndUpdate(document.id.value) {
+                it.title = document.title
+                it.hash = document.hash
+                it.path = document.path
+                it.type = DocumentTypeDao.findById(document.type.id)!!
+            }!!
         }
 
     override suspend fun delete(id: Int): Result<Unit> = runCatchingTransaction {

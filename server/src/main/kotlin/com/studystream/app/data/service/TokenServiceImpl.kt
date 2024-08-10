@@ -48,7 +48,7 @@ class TokenServiceImpl(
     override suspend fun generate(account: Account): String = JWT.create()
         .withAudience(tokenProperties.audience)
         .withIssuer(tokenProperties.issuer)
-        .withClaim(tokenProperties.claimName, account.id.toString())
+        .withClaim(tokenProperties.claimName, account.id.value.toString())
         .withExpiresAt(Date(System.currentTimeMillis() + tokenProperties.ttl))
         .sign(Algorithm.HMAC256(tokenProperties.secret))
 }

@@ -27,7 +27,7 @@ fun Application.installExceptionHandler() {
             call.respond(
                 HttpStatusCode.InternalServerError,
                 ErrorResponse(
-                    message = cause.localizedMessage ?: cause.message!!
+                    message = cause.localizedMessage ?: cause.message ?: "No error message"
                 )
             )
         }

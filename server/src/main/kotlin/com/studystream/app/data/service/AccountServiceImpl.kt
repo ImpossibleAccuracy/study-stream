@@ -4,7 +4,6 @@ import com.studystream.app.data.database.dao.AccountDao
 import com.studystream.app.data.database.tables.AccountTable
 import com.studystream.app.data.database.utils.runCatchingTransaction
 import com.studystream.app.data.database.utils.runSuspendedTransaction
-import com.studystream.app.data.mapper.toDomain
 import com.studystream.app.domain.model.Account
 import com.studystream.app.domain.service.AccountService
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -13,13 +12,13 @@ import org.jetbrains.exposed.sql.update
 
 class AccountServiceImpl : AccountService {
     override suspend fun findUser(id: Int): Account? = runSuspendedTransaction {
-        AccountDao.findById(id)?.toDomain()
+        AccountDao.findById(id)
     }
 
     override suspend fun findUser(username: String): Account? = runSuspendedTransaction {
-        AccountDao.find { AccountTable.username eq username }
+        AccountDao
+            .find { AccountTable.username eq username }
             .firstOrNull()
-            ?.toDomain()
     }
 
     override suspend fun updateUser(id: Int, username: String): Result<Account> = runCatchingTransaction {
@@ -32,7 +31,7 @@ class AccountServiceImpl : AccountService {
                 it[AccountTable.username] = username
             }
 
-        AccountDao[id].toDomain()
+        AccountDao[id]
     }
 
     override suspend fun deleteUser(id: Int): Result<Unit> = runCatchingTransaction {

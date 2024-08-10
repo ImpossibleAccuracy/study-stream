@@ -21,7 +21,7 @@ interface DocumentService {
         mimeType: String,
     ): Result<Document.Type>
 
-    suspend fun update(id: Int, document: Document): Result<Document>
+    suspend fun update(document: Document): Result<Document>
 
     suspend fun delete(id: Int): Result<Unit>
 }
