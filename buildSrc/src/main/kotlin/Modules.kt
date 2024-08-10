@@ -36,6 +36,7 @@ object Modules {
             private const val Base = "${Server.Base}:feature"
 
             const val Auth = "$Base:auth"
+            const val FileStorage = "$Base:file-storage"
         }
     }
 }

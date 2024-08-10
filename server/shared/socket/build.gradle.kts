@@ -19,6 +19,4 @@ dependencies {
     implementation(libs.ktor.resources)
     implementation(libs.ktor.auth)
     implementation(libs.ktor.authJwt)
-
-    implementation(libs.logback)
 }

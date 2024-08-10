@@ -26,3 +26,9 @@ database:
 feature:
   refreshToken:
     tokenRefreshThreshold: 3600000
+
+store:
+  temp: "$TEMP_FILES"
+  regular: "$FILE_STORE"
+  namingPattern: "{FILE_NAME}_{FILE_HASH}_{TIMESTAMP}_.{EXTENSION}"
+  maxFilenameLength: 255

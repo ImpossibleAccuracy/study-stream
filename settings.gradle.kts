@@ -1,4 +1,4 @@
-rootProject.name = "com.studystream.app"
+rootProject.name = "Study Stream"
 
 pluginManagement {
     repositories {
@@ -36,3 +36,4 @@ include(":server:shared:security")
 include(":server:shared:socket")
 
 include(":server:feature:auth")
+include(":server:feature:file-storage")

@@ -2,8 +2,7 @@ package com.studystream.feature.auth.routes
 
 import com.studystream.domain.exception.InvalidInputException
 import com.studystream.domain.exception.OperationRejectedException
-import com.studystream.domain.properties.AppProperties
-import com.studystream.domain.properties.FeatureProperties
+import com.studystream.domain.properties.feature.AuthProperties
 import com.studystream.domain.service.TokenService
 import com.studystream.feature.auth.AuthRoute
 import com.studystream.shared.payload.response.AuthResponse
@@ -26,7 +25,7 @@ internal fun Routing.installRefreshToken() {
 
 
         val result = refreshTokenRoute(
-            properties = call.get<AppProperties>().featureProperties.refreshToken,
+            properties = call.get<AuthProperties>(),
             token = token.substring(TOKEN_PREFIX.length),
             tokenService = call.get(),
         )
@@ -36,7 +35,7 @@ internal fun Routing.installRefreshToken() {
 }
 
 suspend fun refreshTokenRoute(
-    properties: FeatureProperties.RefreshToken,
+    properties: AuthProperties,
     token: String,
     tokenService: TokenService,
 ): AuthResponse = tokenService
