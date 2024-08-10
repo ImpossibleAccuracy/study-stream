@@ -15,8 +15,6 @@ dependencies {
     implementation(libs.ktor.core)
     implementation(libs.koin.ktor)
 
-    implementation(libs.logback)
-
     testImplementation(libs.kotlin.tests)
     testImplementation(libs.ktor.tests)
     testImplementation(libs.koin.tests)

@@ -16,6 +16,4 @@ dependencies {
 
     implementation(libs.ktor.core)
     implementation(libs.ktor.resources)
-
-    implementation(libs.logback)
 }

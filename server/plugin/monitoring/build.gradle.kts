@@ -9,6 +9,4 @@ dependencies {
     implementation(libs.ktor.core)
     implementation(libs.ktor.callLoging)
     implementation(libs.ktor.metrics)
-
-    implementation(libs.logback)
 }
