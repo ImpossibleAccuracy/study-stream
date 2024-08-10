@@ -1,4 +1,4 @@
-package com.studystream.feature.filestorage.data.utils
+package com.studystream.app.data.utils
 
 fun StringBuilder.replace(
     original: String,

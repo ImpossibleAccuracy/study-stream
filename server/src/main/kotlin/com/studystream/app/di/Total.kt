@@ -6,6 +6,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import org.koin.ktor.plugin.Koin
 import org.koin.logger.slf4jLogger
+import kotlin.reflect.full.memberProperties
 
 fun Application.configureKoin(properties: AppProperties) {
     install(Koin) {
@@ -19,10 +20,11 @@ fun Application.configureKoin(properties: AppProperties) {
 }
 
 fun totalAppModules(properties: AppProperties) = module {
-    single { properties.token }
-    single { properties.database }
-    single { properties.feature.fileStorage }
-    single { properties.feature.auth }
+    // Pass all properties from AppProperties to DI
+    single { properties }
+    AppProperties::class.memberProperties.forEach { prop ->
+        single { prop.get(properties) }
+    }
 
     includes(
         serviceModule,

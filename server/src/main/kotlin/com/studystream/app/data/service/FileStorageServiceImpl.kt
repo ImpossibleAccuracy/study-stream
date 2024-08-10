@@ -8,8 +8,8 @@ import com.studystream.app.domain.model.StorageCatalog
 import com.studystream.app.domain.properties.feature.FileStorageProperties
 import com.studystream.app.domain.service.DocumentService
 import com.studystream.app.domain.service.FileStorageService
-import com.studystream.feature.filestorage.data.utils.replace
-import com.studystream.feature.filestorage.data.utils.substring
+import com.studystream.app.data.utils.replace
+import com.studystream.app.data.utils.substring
 import io.ktor.util.logging.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

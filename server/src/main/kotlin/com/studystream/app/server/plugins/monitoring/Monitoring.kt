@@ -11,8 +11,7 @@ import java.util.concurrent.TimeUnit
 fun Application.configureMonitoring() {
     if (environment.developmentMode) {
         install(CallLogging) {
-            level = Level.INFO
-            filter { call -> call.request.path().startsWith("/") }
+            level = Level.DEBUG
         }
     }
 

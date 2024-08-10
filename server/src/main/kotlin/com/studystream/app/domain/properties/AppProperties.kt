@@ -1,14 +1,14 @@
 package com.studystream.app.domain.properties
 
 import com.studystream.app.domain.properties.feature.AuthProperties
-import com.studystream.app.domain.properties.feature.FeatureProperties
 import com.studystream.app.domain.properties.feature.FileStorageProperties
 import io.ktor.server.application.*
 
 data class AppProperties(
     val token: TokenProperties,
     val database: DatabaseProperties,
-    val feature: FeatureProperties,
+    val auth: AuthProperties,
+    val fileStorage: FileStorageProperties
 )
 
 fun ApplicationEnvironment.toAppProperties() = AppProperties(
@@ -26,18 +26,16 @@ fun ApplicationEnvironment.toAppProperties() = AppProperties(
         password = config.property("database.password").getString(),
         poolSize = config.property("database.poolSize").getString().toInt(),
     ),
-    feature = FeatureProperties(
-        auth = AuthProperties(
-            tokenRefreshThresholdMillis = config
-                .property("feature.refreshToken.tokenRefreshThreshold")
-                .getString()
-                .toLong()
-        ),
-        fileStorage = FileStorageProperties(
-            tempStorePath = config.property("store.temp").getString(),
-            regularStorePath = config.property("store.regular").getString(),
-            fileNamePattern = config.property("store.namingPattern").getString(),
-            maxFilenameLength = config.property("store.maxFilenameLength").getString().toInt(),
-        )
+    auth = AuthProperties(
+        tokenRefreshThresholdMillis = config
+            .property("feature.refreshToken.tokenRefreshThreshold")
+            .getString()
+            .toLong()
+    ),
+    fileStorage = FileStorageProperties(
+        tempStorePath = config.property("store.temp").getString(),
+        regularStorePath = config.property("store.regular").getString(),
+        fileNamePattern = config.property("store.namingPattern").getString(),
+        maxFilenameLength = config.property("store.maxFilenameLength").getString().toInt(),
     ),
 )
