@@ -6,43 +6,33 @@ import com.studystream.feature.filestorage.domain.model.StorageCatalog
 import java.io.File
 
 interface FileStorageService {
-
-    /**
-     * Searches for a file in the database by hash.
-     *
-     * If the file is not found, saves file to the [StorageCatalog.Regular] catalog and creates record in database.
-     *
-     * @param file File to save
-     * @return File stored in regular catalog
-     */
-    suspend fun findDocumentOrCreate(file: File): Document
+    suspend fun getFile(document: Document): Result<File>
 
     /**
      * Saves the file in the specified catalog
      *
-     * @param file File to save
+     * @param multipart File to save
      * @param catalog File destination
      * @return File stored in specified catalog
      */
-    suspend fun store(file: MultipartFile, catalog: StorageCatalog): File
+    suspend fun store(multipart: MultipartFile, catalog: StorageCatalog): Result<Document>
 
     /**
      * Moves file to specified catalog
      *
-     * @param file File to move
+     * @param document File to move
      * @param catalog File destination catalog
      * @return File stored in destination catalog
      */
-    suspend fun move(file: File, catalog: StorageCatalog): File
+    suspend fun move(document: Document, catalog: StorageCatalog): Result<Document>
 
     /**
-     * Deletes file from catalog
+     * Deletes document and linked file
      *
-     * @param file File to delete
-     * @param catalog File storage catalog
+     * @param document File to delete
      * @return true when the file successfully deleted, false if fails.
      */
-    suspend fun delete(file: File, catalog: StorageCatalog): Boolean
+    suspend fun delete(document: Document)
 
     /**
      * Clear specified catalog

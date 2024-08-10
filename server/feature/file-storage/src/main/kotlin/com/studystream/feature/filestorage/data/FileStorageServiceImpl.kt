@@ -1,5 +1,6 @@
 package com.studystream.feature.filestorage.data
 
+import com.studystream.domain.exception.ResourceNotFoundException
 import com.studystream.domain.model.Document
 import com.studystream.domain.properties.feature.FileStorageProperties
 import com.studystream.domain.service.DocumentService
@@ -8,10 +9,14 @@ import com.studystream.feature.filestorage.data.utils.substring
 import com.studystream.feature.filestorage.domain.FileStorageService
 import com.studystream.feature.filestorage.domain.model.MultipartFile
 import com.studystream.feature.filestorage.domain.model.StorageCatalog
+import com.studystream.shared.feature.data.ioCall
 import io.ktor.util.logging.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.net.URLConnection
 import java.nio.file.Files
+import java.nio.file.Path
 import java.security.MessageDigest
 import java.time.LocalDateTime
 import kotlin.io.path.*
@@ -20,7 +25,6 @@ import kotlin.io.path.*
 class FileStorageServiceImpl(
     private val properties: FileStorageProperties,
     private val documentService: DocumentService,
-    private val logger: Logger,
 ) : FileStorageService {
     companion object {
         private const val MAX_ORIGINAL_NAME_LENGTH = 15
@@ -32,6 +36,8 @@ class FileStorageServiceImpl(
         private const val EXTENSION_PATTERN = "{EXTENSION}"
     }
 
+    private val logger = KtorSimpleLogger(FileStorageService::class.simpleName!!)
+
     init {
         StorageCatalog.entries.forEach {
             val catalogPath = it.path(properties)
@@ -39,65 +45,54 @@ class FileStorageServiceImpl(
         }
     }
 
-    override suspend fun findDocumentOrCreate(file: File): Document {
-        val hash = getFileHash(file.readBytes())
+    override suspend fun getFile(document: Document): Result<File> = ioCall {
+        val path = Path.of(document.path)
 
-        return documentService.findByHash(hash)
+        if (!path.exists()) {
+            throw ResourceNotFoundException("File deleted")
+        }
+
+        path.toFile()
+    }
+
+    override suspend fun store(multipart: MultipartFile, catalog: StorageCatalog): Result<Document> = ioCall {
+        val hash = computeFileHash(multipart.bytes)
+
+        documentService.findByHash(hash)
             .getOrElse {
-                val fileInStorage = move(file, StorageCatalog.Regular)
+                val fileName = computeFileName(multipart.name, multipart.bytes)
+
+                val catalogPath = catalog.path(properties)
+                val destination = catalogPath.resolve(fileName)
+
+                val file = destination
+                    .createFile()
+                    .toFile()
+
+                file.writeBytes(multipart.bytes)
+
+                logger.debug(
+                    "File \"${multipart.name}\" stored into $catalog catalog as \"${file.absoluteFile}\""
+                )
 
                 documentService
                     .save(
-                        title = properties.maxFilenameLength?.let { substring(fileInStorage.name, it) }
-                            ?: fileInStorage.name,
-                        hash = getFileHash(fileInStorage.readBytes()),
-                        path = fileInStorage.absolutePath,
-                        type = getDocumentType(fileInStorage),
+                        title = properties.maxFilenameLength?.let { substring(file.name, it) }
+                            ?: file.name,
+                        hash = hash,
+                        path = file.absolutePath,
+                        type = getDocumentType(multipart),
                     )
                     .getOrThrow()
             }
     }
 
-    private suspend fun getDocumentType(file: File): Document.Type =
-        URLConnection.guessContentTypeFromName(file.name).let { contentMimeType ->
-            val mimeType = contentMimeType ?: DEFAULT_MIME_TYPE
-
-            documentService.findTypeByMimeType(mimeType)
-                .getOrElse {
-                    documentService
-                        .saveType(
-                            title = "From MIME type $mimeType",
-                            mimeType = mimeType,
-                        )
-                        .getOrThrow()
-                }
-        }
-
-    private fun getFileHash(bytes: ByteArray): String {
+    private fun computeFileHash(bytes: ByteArray): String {
         val md = MessageDigest.getInstance("MD5")
 
         val digest = md.digest(bytes)
 
         return digest.toHexString()
-    }
-
-    override suspend fun store(file: MultipartFile, catalog: StorageCatalog): File {
-        val fileName = computeFileName(file.name, file.bytes)
-
-        val catalogPath = catalog.path(properties)
-        val destination = catalogPath.resolve(fileName)
-
-        destination
-            .createFile()
-            .writeBytes(file.bytes)
-
-        val resultFile = destination.toFile()
-
-        logger.info(
-            "File \"${file.name}\" stored into $catalog catalog as ${resultFile.absoluteFile}"
-        )
-
-        return resultFile
     }
 
     private fun computeFileName(originalFileName: String, content: ByteArray): String = buildString {
@@ -110,7 +105,7 @@ class FileStorageServiceImpl(
         }
 
         replace(FILE_HASH_PATTERN) {
-            getFileHash(content)
+            computeFileHash(content)
         }
 
         replace(TIMESTAMP_PATTERN) {
@@ -124,44 +119,62 @@ class FileStorageServiceImpl(
         replace(":") { "-" }
     }
 
-    override suspend fun move(file: File, catalog: StorageCatalog): File {
-        val catalogPath = catalog.path(properties)
-        val filePath = file.toPath()
+    private suspend fun getDocumentType(file: MultipartFile): Document.Type {
+        val mimeType = file.contentType
+            ?: URLConnection.guessContentTypeFromName(file.name)
+            ?: DEFAULT_MIME_TYPE
 
-        if (filePath.contains(catalogPath)) {
-            return file
+        return documentService.findTypeByMimeType(mimeType)
+            .getOrElse {
+                documentService
+                    .saveType(
+                        title = "From MIME type $mimeType",
+                        mimeType = mimeType,
+                    )
+                    .getOrThrow()
+            }
+    }
+
+    override suspend fun move(document: Document, catalog: StorageCatalog): Result<Document> = ioCall {
+        val catalogPath = catalog.path(properties).absolute()
+        val file = Path.of(document.path)
+
+        if (file.startsWith(catalogPath)) {
+            return@ioCall document
         }
 
         val resultPath = Files.move(
-            filePath,
+            file,
             catalogPath.resolve(file.name),
         )
 
         val resultFile = resultPath.toFile()
 
-        logger.info(
-            "File ${file.name} moved into $catalog catalog as ${resultFile.absoluteFile}"
+        logger.debug(
+            "File \"${file.name}\" moved into $catalog catalog as \"${resultFile.absoluteFile}\""
         )
 
-        return resultFile
+        documentService
+            .update(
+                id = document.id,
+                document = document.copy(
+                    path = resultPath.absolutePathString()
+                )
+            )
+            .getOrThrow()
     }
 
-    override suspend fun delete(file: File, catalog: StorageCatalog): Boolean {
-        val catalogPath = catalog.path(properties).toAbsolutePath()
-        val filePath = file.toPath().toAbsolutePath()
+    override suspend fun delete(document: Document): Unit = withContext(Dispatchers.IO) {
+        val file = Path.of(document.path)
+        file.deleteIfExists()
 
-        if (!filePath.startsWith(catalogPath)) {
-            return false
-        }
-
-        return file.delete().also {
-            if (it) {
-                logger.info("File ${file.name} deleted from $catalog catalog")
+        documentService.delete(document.id)
+            .onSuccess {
+                logger.debug("File \"${file.name}\" deleted")
             }
-        }
     }
 
-    override suspend fun clearCatalog(catalog: StorageCatalog) {
+    override suspend fun clearCatalog(catalog: StorageCatalog) = withContext(Dispatchers.IO) {
         val catalogPath = catalog.path(properties)
 
         catalogPath.deleteRecursively()

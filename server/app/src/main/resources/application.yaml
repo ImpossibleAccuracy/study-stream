@@ -28,7 +28,7 @@ feature:
     tokenRefreshThreshold: 3600000
 
 store:
-  temp: "TestStore/temp"
-  regular: "TestStore/store"
+  temp: "$TEMP_FILES"
+  regular: "$FILE_STORE"
   namingPattern: "{FILE_NAME}_{FILE_HASH}_{TIMESTAMP}_.{EXTENSION}"
   maxFilenameLength: 255

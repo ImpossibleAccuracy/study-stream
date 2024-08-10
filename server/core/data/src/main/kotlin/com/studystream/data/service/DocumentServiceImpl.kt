@@ -8,8 +8,17 @@ import com.studystream.data.database.utils.runCatchingTransaction
 import com.studystream.data.mapper.toDomain
 import com.studystream.domain.model.Document
 import com.studystream.domain.service.DocumentService
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.deleteWhere
 
 class DocumentServiceImpl : DocumentService {
+    override suspend fun findById(id: Int): Result<Document> =
+        runCatchingTransaction {
+            DocumentDao
+                .findById(id)!!
+                .toDomain()
+        }
+
     override suspend fun findByHash(hash: String): Result<Document> =
         runCatchingTransaction {
             DocumentDao
@@ -51,4 +60,22 @@ class DocumentServiceImpl : DocumentService {
                 }
                 .toDomain()
         }
+
+    override suspend fun update(id: Int, document: Document): Result<Document> =
+        runCatchingTransaction {
+            DocumentDao
+                .findByIdAndUpdate(id) {
+                    it.title = document.title
+                    it.hash = document.hash
+                    it.path = document.path
+                    it.type = DocumentTypeDao.findById(document.type.id)!!
+                }!!
+                .toDomain()
+        }
+
+    override suspend fun delete(id: Int): Result<Unit> = runCatchingTransaction {
+        DocumentTable.deleteWhere {
+            DocumentTable.id eq id
+        }
+    }
 }
