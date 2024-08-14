@@ -12,12 +12,13 @@ jobs:
     permissions:
       contents: read
       pull-requests: read
+    outputs:
+      is-changed: ${{ steps.changed-files.outputs.any_changed }}
     steps:
       - name: Get changed files
         id: changed-files
         uses: tj-actions/changed-files@v44
         with:
-          since_last_remote_commit: true
           files: |
             **.gradle
             gradle.properties
@@ -25,15 +26,19 @@ jobs:
             server/**
             shared/**
 
-      - name: Check any server files changed
-        if: steps.changed-files-specific.outputs.any_changed == 'false'
+      - name: List all changed files
+        if: steps.changed-files.outputs.any_changed == 'true'
+        env:
+          ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
         run: |
-          echo "No files changed in server"
-          exit 0
+          for file in ${ALL_CHANGED_FILES}; do
+            echo "$file was changed"
+          done
   build:
     runs-on: ubuntu-latest
     needs:
       - check-tests-need
+    if: needs.check-tests-need.outputs.is-changed == 'true'
     permissions:
       contents: read
     steps:
@@ -54,7 +59,9 @@ jobs:
         run: ./gradlew build
   tests:
     needs:
+      - check-tests-need
       - build
+    if: needs.check-tests-need.outputs.is-changed == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
