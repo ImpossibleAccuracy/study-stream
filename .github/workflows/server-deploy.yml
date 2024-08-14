@@ -1,0 +1,32 @@
+name: Server Actions
+
+on:
+  push:
+    branches:
+      - "main"
+      - "develop"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: "Check Dockerfile existence"
+        id: check_files
+        uses: andstor/file-existence-action@v3
+        with:
+          files: "server/Dockerfile"
+      - name: File exists
+        if: steps.check_files.outputs.files_exists == 'true'
+        run: |
+          echo "Not all files required for deployment are found in the repository"
+          exit 1
+
+      - name: Echo test message
+        run: echo "Test message from deploy"
+
+      - name: Echo deploy success
+        run: echo "Deploy success"
