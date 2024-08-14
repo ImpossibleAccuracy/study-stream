@@ -8,7 +8,6 @@ on:
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  GITHUB_REPOSITORY: ${{ env.GITHUB_REPOSITORY }}
 
 jobs:
   cleanup:
@@ -17,8 +16,7 @@ jobs:
       - name: Delete old workflow runs
         uses: MajorScruffy/delete-old-workflow-runs@v0.3.0
         with:
-          repository: ${{ env.GITHUB_REPOSITORY }}
+          repository: "ImpossibleAccuracy/study-stream"
           older-than-seconds: 86400 # 1 day
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_REPOSITORY: ${{ env.GITHUB_REPOSITORY }}
