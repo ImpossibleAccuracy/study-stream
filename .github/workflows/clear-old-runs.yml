@@ -13,16 +13,10 @@ jobs:
   cleanup:
     runs-on: ubuntu-latest
     steps:
-      - name: Get repository name
-        id: repo-name
-        uses: MariachiBear/get-repo-name-action@v1.3.0
-        with:
-          with-owner: 'true'
-
-      - name: Delete workflow runs
+      - name: Delete old workflow runs
         uses: MajorScruffy/delete-old-workflow-runs@v0.3.0
         with:
-          repository: ${{ steps.repo-name.outputs.repository-name }}
+          repository: ${{ GITHUB_REPOSITORY }}
           older-than-seconds: 2592000 # 30 days
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
