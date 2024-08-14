@@ -16,7 +16,7 @@ jobs:
       - name: Delete old workflow runs
         uses: MajorScruffy/delete-old-workflow-runs@v0.3.0
         with:
-          repository: ${{ GITHUB_REPOSITORY }}
-          older-than-seconds: 2592000 # 30 days
+          repository: ${{ env.GITHUB_REPOSITORY }}
+          older-than-seconds: 86400 # 1 day
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
