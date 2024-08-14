@@ -19,8 +19,9 @@ jobs:
         uses: andstor/file-existence-action@v3
         with:
           files: "server/Dockerfile"
+
       - name: File exists
-        if: steps.check_files.outputs.files_exists == 'true'
+        if: steps.check_files.outputs.files_exists == 'false'
         run: |
           echo "Not all files required for deployment are found in the repository"
           exit 1
