@@ -1,0 +1,34 @@
+ktor:
+  development: "$DEV:true"
+  application:
+    modules:
+      - com.studystream.app.ApplicationKt.module
+  deployment:
+    port: "$PORT:8080"
+    watch:
+      - classes
+      - resources
+
+jwt:
+  secret: "$JWT_SECRET:secret"
+  issuer: "$JWT_ISSUER:http://0.0.0.0:8080/"
+  audience: "$JWT_AUDIENCE:http://0.0.0.0:8080/hello"
+  realm: "$JWT_REALM:Access to API"
+  claimName: "username"
+  ttl: "$JWT_TTL:3600000"
+
+database:
+  url: "$DATABASE_URL"
+  user: "$DATABASE_USER"
+  password: "$DATABASE_PASSWORD"
+  poolSize: "$POOL_SIZE:6"
+
+feature:
+  refreshToken:
+    tokenRefreshThreshold: 3600000
+
+store:
+  temp: "$TEMP_FILES"
+  regular: "$FILE_STORE"
+  namingPattern: "{FILE_NAME}_{FILE_HASH}_{TIMESTAMP}_.{EXTENSION}"
+  maxFilenameLength: 255

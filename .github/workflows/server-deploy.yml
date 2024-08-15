@@ -1,0 +1,33 @@
+name: Server Actions
+
+on:
+  push:
+    branches:
+      - "main"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: "Check Dockerfile existence"
+        id: check_files
+        uses: andstor/file-existence-action@v3
+        with:
+          files: "server/Dockerfile"
+
+      - name: File exists
+        if: steps.check_files.outputs.files_exists == 'false'
+        run: |
+          echo "Not all files required for deployment are found in the repository"
+          exit 1
+
+      - name: Deploy
+        uses: bankfliptech/deploy-to-render@v1
+        with:
+          serviceId: ${{ secrets.RENDER_SERVICE_ID }}
+          apiKey: ${{ secrets.RENDER_API_KEY }}
+          deployHookURL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
