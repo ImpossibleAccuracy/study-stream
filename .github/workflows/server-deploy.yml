@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - "main"
-      - "develop"
 
 jobs:
   deploy:
@@ -26,8 +25,9 @@ jobs:
           echo "Not all files required for deployment are found in the repository"
           exit 1
 
-      - name: Echo test message
-        run: echo "Test message from deploy"
-
-      - name: Echo deploy success
-        run: echo "Deploy success"
+      - name: Deploy
+        uses: bankfliptech/deploy-to-render@v1
+        with:
+          serviceId: ${{ secrets.RENDER_SERVICE_ID }}
+          apiKey: ${{ secrets.RENDER_API_KEY }}
+          deployHookURL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
