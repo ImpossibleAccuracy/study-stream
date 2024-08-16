@@ -13,6 +13,8 @@ import io.ktor.server.routing.*
 internal fun Routing.installGetMeRoute() {
     authenticate {
         get<AuthRoutes.MeRoute> {
+            call.application.log.info("Get me route called")
+
             val account = call.requireAccount()
 
             val result = getMeRoute(account)
