@@ -61,6 +61,8 @@ dependencies {
     implementation(libs.log4j.core)
     implementation(libs.log4j.impl)
 
+    testImplementation(libs.kotlin.tests)
+
 //    implementation(project(Modules.Server.Feature.Auth))
 //    implementation(project(Modules.Server.Feature.FileStorage))
 }
