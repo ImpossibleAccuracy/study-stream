@@ -31,6 +31,7 @@ jobs:
 
       - name: Deploy dev
         uses: JorgeLNJunior/render-deploy@v1.4.4
+        continue-on-error: true
         with:
           service_id: ${{ secrets.DEV_SERVICE_ID }}
           api_key: ${{ secrets.API_KEY }}
