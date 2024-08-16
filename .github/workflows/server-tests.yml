@@ -3,7 +3,6 @@ name: Server tests
 on:
   pull_request:
     branches:
-      - "main"
       - "develop"
 
 concurrency:
