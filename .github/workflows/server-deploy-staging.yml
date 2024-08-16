@@ -1,0 +1,33 @@
+name: Server Actions
+
+on:
+  push:
+    branches:
+      - "develop"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: "Check Dockerfile existence"
+        id: check_files
+        uses: andstor/file-existence-action@v3
+        with:
+          files: "server/Dockerfile"
+
+      - name: File exists
+        if: steps.check_files.outputs.files_exists == 'false'
+        run: |
+          echo "Not all files required for deployment are found in the repository"
+          exit 1
+
+      - name: Deploy staging
+        uses: JorgeLNJunior/render-deploy@v1.4.4
+        with:
+          service_id: ${{ secrets.STAGING_SERVICE_ID }}
+          api_key: ${{ secrets.API_KEY }}
+          wait_deploy: true
