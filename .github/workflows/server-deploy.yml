@@ -26,8 +26,8 @@ jobs:
           exit 1
 
       - name: Deploy
-        uses: bankfliptech/deploy-to-render@v1
+        uses: JorgeLNJunior/render-deploy@v1.4.4
         with:
-          serviceId: ${{ secrets.RENDER_SERVICE_ID }}
-          apiKey: ${{ secrets.RENDER_API_KEY }}
-          deployHookURL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+          service_id: ${{ secrets.RENDER_SERVICE_ID }}
+          api_key: ${{ secrets.RENDER_API_KEY }}
+          wait_deploy: true
