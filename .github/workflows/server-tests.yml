@@ -1,4 +1,4 @@
-name: Server Actions
+name: Server tests
 
 on:
   pull_request:
