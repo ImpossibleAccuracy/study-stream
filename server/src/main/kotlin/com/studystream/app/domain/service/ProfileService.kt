@@ -25,5 +25,5 @@ interface ProfileService {
         patronymic: String?
     ): Boolean
 
-    suspend fun updateAvatar(profileId: Id, avatar: Document): Result<Unit>
+    suspend fun updateAvatar(profileId: Id, avatar: Document?): Result<Unit>
 }

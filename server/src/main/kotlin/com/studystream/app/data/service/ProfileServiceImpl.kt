@@ -47,9 +47,9 @@ class ProfileServiceImpl : ProfileService {
             )
         }
 
-    override suspend fun updateAvatar(profileId: Id, avatar: Document): Result<Unit> = runCatchingTransaction {
+    override suspend fun updateAvatar(profileId: Id, avatar: Document?): Result<Unit> = runCatchingTransaction {
         ProfileDao.findByIdAndUpdate(profileId) {
-            it.avatarId = avatar.id
+            it.avatarId = avatar?.id
         }
     }
 }
