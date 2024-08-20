@@ -16,10 +16,14 @@ interface ProfileService {
         avatar: Document?,
     ): Result<Profile>
 
+    suspend fun existsProfile(id: Id): Boolean
+
     suspend fun existsProfile(
         accountId: Id,
         name: String,
         surname: String,
         patronymic: String?
     ): Boolean
+
+    suspend fun updateAvatar(profileId: Id, avatar: Document): Result<Unit>
 }

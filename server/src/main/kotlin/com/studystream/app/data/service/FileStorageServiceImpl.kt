@@ -1,5 +1,6 @@
 package com.studystream.app.data.service
 
+import com.studystream.app.data.database.utils.runCatchingTransaction
 import com.studystream.app.data.utils.ioCall
 import com.studystream.app.data.utils.replace
 import com.studystream.app.data.utils.substring
@@ -135,12 +136,12 @@ class FileStorageServiceImpl(
             }
     }
 
-    override suspend fun move(document: Document, catalog: StorageCatalog): Result<Document> = ioCall {
+    override suspend fun move(document: Document, catalog: StorageCatalog): Result<Document> = runCatchingTransaction {
         val catalogPath = catalog.path(properties).absolute()
         val file = Path.of(document.path)
 
         if (file.startsWith(catalogPath)) {
-            return@ioCall document
+            return@runCatchingTransaction document
         }
 
         val resultPath = Files.move(
@@ -156,9 +157,7 @@ class FileStorageServiceImpl(
 
         document.path = resultPath.absolutePathString()
 
-        documentService
-            .update(document)
-            .getOrThrow()
+        return@runCatchingTransaction document
     }
 
     override suspend fun delete(document: Document): Unit = withContext(Dispatchers.IO) {

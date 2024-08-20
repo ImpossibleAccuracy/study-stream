@@ -33,6 +33,10 @@ class ProfileServiceImpl : ProfileService {
         }
     }
 
+    override suspend fun existsProfile(id: Id): Boolean = runSuspendedTransaction {
+        ProfileDao.exists(ProfileTable.id eq id)
+    }
+
     override suspend fun existsProfile(accountId: Id, name: String, surname: String, patronymic: String?): Boolean =
         runSuspendedTransaction {
             ProfileDao.exists(
@@ -42,4 +46,10 @@ class ProfileServiceImpl : ProfileService {
                         (ProfileTable.patronymic eq patronymic)
             )
         }
+
+    override suspend fun updateAvatar(profileId: Id, avatar: Document): Result<Unit> = runCatchingTransaction {
+        ProfileDao.findByIdAndUpdate(profileId) {
+            it.avatarId = avatar.id
+        }
+    }
 }

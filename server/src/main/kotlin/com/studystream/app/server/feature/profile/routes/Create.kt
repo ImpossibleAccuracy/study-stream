@@ -4,7 +4,7 @@ import com.studystream.app.domain.exception.InvalidInputException
 import com.studystream.app.domain.model.Account
 import com.studystream.app.domain.service.AccountService
 import com.studystream.app.domain.service.ProfileService
-import com.studystream.app.server.feature.profile.ProfileRoute
+import com.studystream.app.server.feature.profile.Profiles
 import com.studystream.app.server.mapper.toDto
 import com.studystream.app.server.security.requireAccount
 import com.studystream.shared.payload.dto.ProfileDto
@@ -19,7 +19,7 @@ import org.koin.ktor.ext.get
 
 internal fun Routing.installCreateProfileRoute() {
     authenticate {
-        post<ProfileRoute> {
+        post<Profiles> {
             val result = createProfile(
                 body = call.receive(),
                 account = call.requireAccount(),
