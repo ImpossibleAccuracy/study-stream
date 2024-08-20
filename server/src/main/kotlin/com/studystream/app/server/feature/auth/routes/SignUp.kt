@@ -2,7 +2,7 @@ package com.studystream.app.server.feature.auth.routes
 
 import com.studystream.app.domain.service.AuthService
 import com.studystream.app.domain.service.TokenService
-import com.studystream.app.server.feature.auth.AuthRoutes
+import com.studystream.app.server.feature.auth.AuthRoute
 import com.studystream.shared.payload.request.SignUpRequest
 import com.studystream.shared.payload.response.AuthResponse
 import io.ktor.server.application.*
@@ -13,7 +13,7 @@ import io.ktor.server.routing.Routing
 import org.koin.ktor.ext.get
 
 internal fun Routing.installSignUpRoute() {
-    post<AuthRoutes.SignUpRoute> {
+    post<AuthRoute.SignUpRoute> {
         val result = signUpRoute(
             body = call.receive(),
             authService = call.get(),

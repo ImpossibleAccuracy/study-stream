@@ -2,7 +2,7 @@ package com.studystream.app.server.feature.auth.routes.me
 
 import com.studystream.app.domain.model.Account
 import com.studystream.app.domain.service.AccountService
-import com.studystream.app.server.feature.auth.AuthRoutes
+import com.studystream.app.server.feature.auth.AuthRoute
 import com.studystream.app.server.mapper.toDto
 import com.studystream.app.server.security.requireAccount
 import com.studystream.shared.payload.dto.AccountDto
@@ -17,7 +17,7 @@ import org.koin.ktor.ext.get
 
 internal fun Routing.installUpdateMeRoute() {
     authenticate {
-        put<AuthRoutes.MeRoute> {
+        put<AuthRoute.MeRoute> {
             val account = call.requireAccount()
 
             val result = updateMeRoute(

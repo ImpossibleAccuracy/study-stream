@@ -6,13 +6,13 @@ import com.studystream.app.data.database.tables.DocumentTypeTable
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.id.EntityID
 
-class Document(id: EntityID<Int>) : IntEntity(id) {
+class Document(id: EntityID<Id>) : IntEntity(id) {
     var title: String by DocumentTable.title
     var hash: String by DocumentTable.hash
     var path: String by DocumentTable.path
     var type: Type by DocumentTypeDao referencedOn DocumentTable.type
 
-    class Type(id: EntityID<Int>) : IntEntity(id) {
+    class Type(id: EntityID<Id>) : IntEntity(id) {
         var title: String by DocumentTypeTable.title
         var mimeType: String by DocumentTypeTable.mimeType
     }
