@@ -87,4 +87,8 @@ class ProfileServiceImpl : ProfileService {
             it.avatarId = avatar?.id
         }
     }
+
+    override suspend fun deleteProfile(profileId: Id): Result<Unit> = runCatchingTransaction {
+        ProfileDao.findById(profileId)!!.delete()
+    }
 }

@@ -39,4 +39,6 @@ interface ProfileService {
     ): Result<Profile>
 
     suspend fun updateAvatar(profileId: Id, avatar: Document?): Result<Unit>
+
+    suspend fun deleteProfile(profileId: Id): Result<Unit>
 }

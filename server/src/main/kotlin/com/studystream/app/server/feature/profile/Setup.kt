@@ -1,6 +1,7 @@
 package com.studystream.app.server.feature.profile
 
 import com.studystream.app.server.feature.profile.routes.avatar.installDeleteProfileAvatarRoute
+import com.studystream.app.server.feature.profile.routes.installDeleteProfileRoute
 import com.studystream.app.server.feature.profile.routes.avatar.installGetProfileAvatarRoute
 import com.studystream.app.server.feature.profile.routes.avatar.installUpdateProfileAvatarRoute
 import com.studystream.app.server.feature.profile.routes.installCreateProfileRoute
@@ -14,6 +15,7 @@ fun Routing.installProfileRoutes() {
     installGetProfilesListRoute()
     installGetProfileDetailsRoute()
     installUpdateProfileRoute()
+    installDeleteProfileRoute()
 
     installUpdateProfileAvatarRoute()
     installGetProfileAvatarRoute()
