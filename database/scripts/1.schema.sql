@@ -33,7 +33,7 @@ CREATE TABLE `profile` (
   `account_id` int NOT NULL,
   `name` varchar(255) NOT NULL,
   `surname` varchar(255) NOT NULL,
-  `patronymic` varchar(255) NOT NULL,
+  `patronymic` varchar(255) DEFAULT NULL,
   `birthday` date NOT NULL,
   `avatar_id` int
 );

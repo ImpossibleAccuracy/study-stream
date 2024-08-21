@@ -8,7 +8,7 @@ interface TokenService {
         refreshThresholdMillis: Long,
     ): Result<RefreshedToken>
 
-    suspend fun generate(account: Account): String
+    suspend fun generate(account: Account): Result<String>
 
     data class RefreshedToken(
         val account: Account,

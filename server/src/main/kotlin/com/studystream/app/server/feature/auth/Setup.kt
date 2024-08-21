@@ -8,7 +8,7 @@ import com.studystream.app.server.feature.auth.routes.me.installGetMeRoute
 import com.studystream.app.server.feature.auth.routes.me.installUpdateMeRoute
 import io.ktor.server.routing.*
 
-fun Routing.installAuth() {
+fun Routing.installAuthRoutes() {
     installSignInRoute()
     installSignUpRoute()
     installRefreshToken()

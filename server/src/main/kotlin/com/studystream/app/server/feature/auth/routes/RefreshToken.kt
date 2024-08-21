@@ -4,18 +4,18 @@ import com.studystream.app.domain.exception.InvalidInputException
 import com.studystream.app.domain.exception.OperationRejectedException
 import com.studystream.app.domain.properties.feature.AuthProperties
 import com.studystream.app.domain.service.TokenService
-import com.studystream.app.server.feature.auth.AuthRoutes
+import com.studystream.app.server.feature.auth.AuthRoute
+import com.studystream.app.server.utils.typeSafePost
 import com.studystream.shared.payload.response.AuthResponse
 import io.ktor.server.application.*
-import io.ktor.server.resources.*
 import io.ktor.server.response.*
-import io.ktor.server.routing.Routing
+import io.ktor.server.routing.*
 import org.koin.ktor.ext.get
 
 private const val TOKEN_PREFIX = "Bearer "
 
 internal fun Routing.installRefreshToken() {
-    post<AuthRoutes.RefreshTokenRoute> {
+    typeSafePost<AuthRoute.RefreshTokenRoute> {
         val token = call.request.headers["Authorization"]
             ?: throw OperationRejectedException("Unauthorized")
 

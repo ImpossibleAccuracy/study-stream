@@ -1,5 +1,6 @@
 package com.studystream.app.data.service
 
+import com.studystream.app.data.database.utils.runCatchingTransaction
 import com.studystream.app.data.utils.ioCall
 import com.studystream.app.data.utils.replace
 import com.studystream.app.data.utils.substring
@@ -58,33 +59,33 @@ class FileStorageServiceImpl(
     override suspend fun store(multipart: MultipartFile, catalog: StorageCatalog): Result<Document> = ioCall {
         val hash = computeFileHash(multipart.bytes)
 
-        documentService.findByHash(hash)
-            .getOrElse {
-                val fileName = computeFileName(multipart.name, multipart.bytes)
+        val storedDocument = documentService.findByHash(hash)
+        if (storedDocument != null) return@ioCall storedDocument
 
-                val catalogPath = catalog.path(properties)
-                val destination = catalogPath.resolve(fileName)
+        val fileName = computeFileName(multipart.name, multipart.bytes)
 
-                val file = destination
-                    .createFile()
-                    .toFile()
+        val catalogPath = catalog.path(properties)
+        val destination = catalogPath.resolve(fileName)
 
-                file.writeBytes(multipart.bytes)
+        val file = destination
+            .createFile()
+            .toFile()
 
-                logger.debug(
-                    "File \"${multipart.name}\" stored into $catalog catalog as \"${file.absoluteFile}\""
-                )
+        file.writeBytes(multipart.bytes)
 
-                documentService
-                    .save(
-                        title = properties.maxFilenameLength?.let { substring(file.name, it) }
-                            ?: file.name,
-                        hash = hash,
-                        path = file.absolutePath,
-                        type = getDocumentType(multipart),
-                    )
-                    .getOrThrow()
-            }
+        logger.debug(
+            "File \"${multipart.name}\" stored into $catalog catalog as \"${file.absoluteFile}\""
+        )
+
+        return@ioCall documentService
+            .save(
+                title = properties.maxFilenameLength?.let { substring(file.name, it) }
+                    ?: file.name,
+                hash = hash,
+                path = file.absolutePath,
+                type = getDocumentType(multipart),
+            )
+            .getOrThrow()
     }
 
     private fun computeFileHash(bytes: ByteArray): String {
@@ -125,22 +126,20 @@ class FileStorageServiceImpl(
             ?: DEFAULT_MIME_TYPE
 
         return documentService.findTypeByMimeType(mimeType)
-            .getOrElse {
-                documentService
-                    .saveType(
-                        title = "From MIME type $mimeType",
-                        mimeType = mimeType,
-                    )
-                    .getOrThrow()
-            }
+            ?: documentService
+                .saveType(
+                    title = "From MIME type $mimeType",
+                    mimeType = mimeType,
+                )
+                .getOrThrow()
     }
 
-    override suspend fun move(document: Document, catalog: StorageCatalog): Result<Document> = ioCall {
+    override suspend fun move(document: Document, catalog: StorageCatalog): Result<Document> = runCatchingTransaction {
         val catalogPath = catalog.path(properties).absolute()
         val file = Path.of(document.path)
 
         if (file.startsWith(catalogPath)) {
-            return@ioCall document
+            return@runCatchingTransaction document
         }
 
         val resultPath = Files.move(
@@ -156,9 +155,7 @@ class FileStorageServiceImpl(
 
         document.path = resultPath.absolutePathString()
 
-        documentService
-            .update(document)
-            .getOrThrow()
+        return@runCatchingTransaction document
     }
 
     override suspend fun delete(document: Document): Unit = withContext(Dispatchers.IO) {
