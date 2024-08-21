@@ -33,6 +33,18 @@ class ProfileServiceImpl : ProfileService {
         }
     }
 
+    override suspend fun getProfile(id: Id): Profile? = runSuspendedTransaction {
+        ProfileDao.findById(id)
+    }
+
+    override suspend fun getProfilesByOwner(ownerId: Id): List<Profile> = runSuspendedTransaction {
+        ProfileDao
+            .find {
+                ProfileTable.accountId eq ownerId
+            }
+            .toList()
+    }
+
     override suspend fun existsProfile(id: Id): Boolean = runSuspendedTransaction {
         ProfileDao.exists(ProfileTable.id eq id)
     }

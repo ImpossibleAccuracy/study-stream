@@ -16,6 +16,10 @@ interface ProfileService {
         avatar: Document?,
     ): Result<Profile>
 
+    suspend fun getProfile(id: Id): Profile?
+
+    suspend fun getProfilesByOwner(ownerId: Id): List<Profile>
+
     suspend fun existsProfile(id: Id): Boolean
 
     suspend fun existsProfile(

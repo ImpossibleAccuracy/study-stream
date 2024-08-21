@@ -5,35 +5,13 @@ import com.studystream.app.data.database.dao.DocumentTypeDao
 import com.studystream.app.data.database.tables.DocumentTable
 import com.studystream.app.data.database.tables.DocumentTypeTable
 import com.studystream.app.data.database.utils.runCatchingTransaction
+import com.studystream.app.data.database.utils.runSuspendedTransaction
 import com.studystream.app.domain.model.Document
 import com.studystream.app.domain.service.DocumentService
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
 
 class DocumentServiceImpl : DocumentService {
-    override suspend fun findById(id: Int): Result<Document> =
-        runCatchingTransaction {
-            DocumentDao.findById(id)!!
-        }
-
-    override suspend fun findByHash(hash: String): Result<Document> =
-        runCatchingTransaction {
-            DocumentDao
-                .find {
-                    DocumentTable.hash eq hash
-                }
-                .first()
-        }
-
-    override suspend fun findTypeByMimeType(mimeType: String): Result<Document.Type> =
-        runCatchingTransaction {
-            DocumentTypeDao
-                .find {
-                    DocumentTypeTable.mimeType eq mimeType
-                }
-                .first()
-        }
-
     override suspend fun save(title: String, hash: String, path: String, type: Document.Type): Result<Document> =
         runCatchingTransaction {
             DocumentDao.new {
@@ -50,6 +28,29 @@ class DocumentServiceImpl : DocumentService {
                 this.title = title
                 this.mimeType = mimeType
             }
+        }
+
+    override suspend fun findById(id: Int): Document? =
+        runSuspendedTransaction {
+            DocumentDao.findById(id)
+        }
+
+    override suspend fun findByHash(hash: String): Document =
+        runSuspendedTransaction {
+            DocumentDao
+                .find {
+                    DocumentTable.hash eq hash
+                }
+                .first()
+        }
+
+    override suspend fun findTypeByMimeType(mimeType: String): Document.Type? =
+        runSuspendedTransaction {
+            DocumentTypeDao
+                .find {
+                    DocumentTypeTable.mimeType eq mimeType
+                }
+                .firstOrNull()
         }
 
     override suspend fun update(document: Document): Result<Document> =

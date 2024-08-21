@@ -2,6 +2,7 @@ package com.studystream.app.data.service
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import com.studystream.app.data.utils.ioCall
 import com.studystream.app.domain.exception.OperationRejectedException
 import com.studystream.app.domain.exception.ResourceNotFoundException
 import com.studystream.app.domain.model.Account
@@ -37,7 +38,7 @@ class TokenServiceImpl(
         val account = accountService.findUser(accountId)
             ?: throw ResourceNotFoundException("User not found")
 
-        val newToken = generate(account)
+        val newToken = generate(account).getOrThrow()
 
         TokenService.RefreshedToken(
             account = account,
@@ -45,10 +46,12 @@ class TokenServiceImpl(
         )
     }
 
-    override suspend fun generate(account: Account): String = JWT.create()
-        .withAudience(tokenProperties.audience)
-        .withIssuer(tokenProperties.issuer)
-        .withClaim(tokenProperties.claimName, account.id.value.toString())
-        .withExpiresAt(Date(System.currentTimeMillis() + tokenProperties.ttl))
-        .sign(Algorithm.HMAC256(tokenProperties.secret))
+    override suspend fun generate(account: Account): Result<String> = ioCall {
+        JWT.create()
+            .withAudience(tokenProperties.audience)
+            .withIssuer(tokenProperties.issuer)
+            .withClaim(tokenProperties.claimName, account.id.value.toString())
+            .withExpiresAt(Date(System.currentTimeMillis() + tokenProperties.ttl))
+            .sign(Algorithm.HMAC256(tokenProperties.secret))
+    }
 }

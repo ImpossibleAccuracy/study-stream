@@ -3,12 +3,6 @@ package com.studystream.app.domain.service
 import com.studystream.app.domain.model.Document
 
 interface DocumentService {
-    suspend fun findById(id: Int): Result<Document>
-
-    suspend fun findByHash(hash: String): Result<Document>
-
-    suspend fun findTypeByMimeType(mimeType: String): Result<Document.Type>
-
     suspend fun save(
         title: String,
         hash: String,
@@ -20,6 +14,12 @@ interface DocumentService {
         title: String,
         mimeType: String,
     ): Result<Document.Type>
+
+    suspend fun findById(id: Int): Document?
+
+    suspend fun findByHash(hash: String): Document?
+
+    suspend fun findTypeByMimeType(mimeType: String): Document.Type?
 
     suspend fun update(document: Document): Result<Document>
 
