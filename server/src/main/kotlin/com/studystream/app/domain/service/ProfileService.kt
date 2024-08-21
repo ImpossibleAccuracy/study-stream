@@ -18,6 +18,8 @@ interface ProfileService {
 
     suspend fun getProfile(id: Id): Profile?
 
+    suspend fun getProfiles(): List<Profile>
+
     suspend fun getProfilesByOwner(ownerId: Id): List<Profile>
 
     suspend fun existsProfile(id: Id): Boolean

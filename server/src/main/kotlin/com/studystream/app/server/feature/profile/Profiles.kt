@@ -1,5 +1,6 @@
 package com.studystream.app.server.feature.profile
 
+import com.studystream.app.domain.model.Id
 import com.studystream.app.server.feature.BaseRoutes
 import io.ktor.resources.*
 import kotlinx.serialization.SerialName
@@ -8,6 +9,7 @@ import com.studystream.app.domain.model.Id as DomainId
 
 @Resource("/profile")
 class Profiles(
+    val ownerId: Id? = null,
     @Suppress("unused") val parent: BaseRoutes = BaseRoutes()
 ) {
     companion object {

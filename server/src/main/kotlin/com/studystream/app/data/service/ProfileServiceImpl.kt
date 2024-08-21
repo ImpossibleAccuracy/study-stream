@@ -38,6 +38,10 @@ class ProfileServiceImpl : ProfileService {
         ProfileDao.findById(id)
     }
 
+    override suspend fun getProfiles(): List<Profile> = runSuspendedTransaction {
+        ProfileDao.all().toList()
+    }
+
     override suspend fun getProfilesByOwner(ownerId: Id): List<Profile> = runSuspendedTransaction {
         ProfileDao
             .find {
