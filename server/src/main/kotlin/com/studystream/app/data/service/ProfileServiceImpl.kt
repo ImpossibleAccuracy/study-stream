@@ -12,11 +12,12 @@ import com.studystream.app.domain.model.Profile
 import com.studystream.app.domain.service.ProfileService
 import kotlinx.datetime.LocalDate
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.neq
 import org.jetbrains.exposed.sql.and
 
 class ProfileServiceImpl : ProfileService {
     override suspend fun createProfile(
-        account: Account,
+        owner: Account,
         name: String,
         surname: String,
         patronymic: String?,
@@ -29,7 +30,7 @@ class ProfileServiceImpl : ProfileService {
             this.patronymic = patronymic
             this.birthday = birthday
             this.avatarId = avatar?.id
-            this.accountId = account.id
+            this.account = owner
         }
     }
 
@@ -49,15 +50,37 @@ class ProfileServiceImpl : ProfileService {
         ProfileDao.exists(ProfileTable.id eq id)
     }
 
-    override suspend fun existsProfile(accountId: Id, name: String, surname: String, patronymic: String?): Boolean =
+    override suspend fun existsProfile(
+        accountId: Id,
+        name: String,
+        surname: String,
+        patronymic: String?,
+        excludeProfileId: Id?,
+    ): Boolean =
         runSuspendedTransaction {
             ProfileDao.exists(
                 (ProfileTable.accountId eq accountId) and
                         (ProfileTable.name eq name) and
                         (ProfileTable.surname eq surname) and
-                        (ProfileTable.patronymic eq patronymic)
+                        (ProfileTable.patronymic eq patronymic) and
+                        (ProfileTable.id neq excludeProfileId)
             )
         }
+
+    override suspend fun updateProfile(
+        profileId: Id,
+        name: String,
+        surname: String,
+        patronymic: String?,
+        birthday: LocalDate
+    ): Result<Profile> = runCatchingTransaction {
+        ProfileDao.findByIdAndUpdate(profileId) {
+            it.name = name
+            it.surname = surname
+            it.patronymic = patronymic
+            it.birthday = birthday
+        }!!
+    }
 
     override suspend fun updateAvatar(profileId: Id, avatar: Document?): Result<Unit> = runCatchingTransaction {
         ProfileDao.findByIdAndUpdate(profileId) {

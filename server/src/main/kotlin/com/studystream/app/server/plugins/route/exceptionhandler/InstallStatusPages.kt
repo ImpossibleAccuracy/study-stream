@@ -20,9 +20,6 @@ fun Application.installExceptionHandler() {
 
         exception<Throwable> { call, cause ->
             call.application.log.error(cause)
-            if (call.application.environment.developmentMode) {
-                cause.stackTrace.forEach { println(it) }
-            }
 
             call.respond(
                 HttpStatusCode.InternalServerError,

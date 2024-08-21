@@ -8,7 +8,7 @@ import kotlinx.datetime.LocalDate
 
 interface ProfileService {
     suspend fun createProfile(
-        account: Account,
+        owner: Account,
         name: String,
         surname: String,
         patronymic: String?,
@@ -26,8 +26,17 @@ interface ProfileService {
         accountId: Id,
         name: String,
         surname: String,
-        patronymic: String?
+        patronymic: String?,
+        excludeProfileId: Id? = null,
     ): Boolean
+
+    suspend fun updateProfile(
+        profileId: Id,
+        name: String,
+        surname: String,
+        patronymic: String?,
+        birthday: LocalDate,
+    ): Result<Profile>
 
     suspend fun updateAvatar(profileId: Id, avatar: Document?): Result<Unit>
 }
