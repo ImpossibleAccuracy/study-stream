@@ -1,4 +1,4 @@
-package com.studystream.app.server.feature.profile.routes
+package com.studystream.app.server.feature.profile.routes.avatar
 
 import com.studystream.app.domain.exception.InvalidInputException
 import com.studystream.app.domain.exception.ResourceNotFoundException
@@ -19,7 +19,7 @@ import org.koin.ktor.ext.get
 
 internal fun Routing.installUpdateProfileAvatarRoute() {
     authenticate {
-        typeSafePut<Profiles.Id> { route ->
+        typeSafePut<Profiles.Id.Avatar> { route ->
             updateProfileAvatar(
                 avatar = call
                     .receiveFile(
@@ -28,7 +28,7 @@ internal fun Routing.installUpdateProfileAvatarRoute() {
                         Profiles.DEFAULT_AVATAR_EXTENSION
                     )
                     ?: throw InvalidInputException("No avatar presented"),
-                profileId = route.id,
+                profileId = route.parent.id,
                 profileService = call.get(),
                 fileStorageService = call.get(),
             )

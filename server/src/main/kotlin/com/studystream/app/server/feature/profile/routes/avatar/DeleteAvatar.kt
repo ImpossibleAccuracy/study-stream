@@ -1,4 +1,4 @@
-package com.studystream.app.server.feature.profile.routes
+package com.studystream.app.server.feature.profile.routes.avatar
 
 import com.studystream.app.domain.exception.ResourceNotFoundException
 import com.studystream.app.domain.model.Id
@@ -14,9 +14,9 @@ import org.koin.ktor.ext.get
 
 internal fun Routing.installDeleteProfileAvatarRoute() {
     authenticate {
-        typeSafeDelete<Profiles.Id> { route ->
+        typeSafeDelete<Profiles.Id.Avatar> { route ->
             deleteProfileAvatar(
-                profileId = route.id,
+                profileId = route.parent.id,
                 profileService = call.get(),
             )
 

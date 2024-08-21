@@ -22,5 +22,11 @@ class Profiles(
         @SerialName("id")
         val id: DomainId,
         @Suppress("unused") val parent: Profiles = Profiles()
-    )
+    ) {
+        @Serializable
+        @Resource("/avatar")
+        class Avatar(
+            val parent: Id,
+        )
+    }
 }
