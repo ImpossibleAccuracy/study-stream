@@ -14,7 +14,7 @@ import org.koin.ktor.ext.get
 
 internal fun Routing.installDeleteProfileAvatarRoute() {
     authenticate {
-        typeSafeDelete<Profiles.Id.Avatar> { route ->
+        typeSafeDelete<Profiles.ProfileId.Avatar> { route ->
             deleteProfileAvatar(
                 profileId = route.parent.id,
                 profileService = call.get(),

@@ -19,7 +19,7 @@ import org.koin.ktor.ext.get
 
 internal fun Routing.installUpdateProfileAvatarRoute() {
     authenticate {
-        typeSafePut<Profiles.Id.Avatar> { route ->
+        typeSafePut<Profiles.ProfileId.Avatar> { route ->
             updateProfileAvatar(
                 avatar = call
                     .receiveFile(

@@ -18,7 +18,7 @@ class Profiles(
 
     @Serializable
     @Resource("/{id}")
-    class Id(
+    class ProfileId(
         @SerialName("id")
         val id: DomainId,
         @Suppress("unused") val parent: Profiles = Profiles()
@@ -26,7 +26,7 @@ class Profiles(
         @Serializable
         @Resource("/avatar")
         class Avatar(
-            val parent: Id,
+            val parent: ProfileId,
         )
     }
 }

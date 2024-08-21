@@ -35,13 +35,13 @@ class DocumentServiceImpl : DocumentService {
             DocumentDao.findById(id)
         }
 
-    override suspend fun findByHash(hash: String): Document =
+    override suspend fun findByHash(hash: String): Document? =
         runSuspendedTransaction {
             DocumentDao
                 .find {
                     DocumentTable.hash eq hash
                 }
-                .first()
+                .firstOrNull()
         }
 
     override suspend fun findTypeByMimeType(mimeType: String): Document.Type? =
