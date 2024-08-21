@@ -3,17 +3,17 @@ package com.studystream.app.server.feature.auth.routes
 import com.studystream.app.domain.service.AuthService
 import com.studystream.app.domain.service.TokenService
 import com.studystream.app.server.feature.auth.AuthRoute
+import com.studystream.app.server.utils.typeSafePost
 import com.studystream.shared.payload.request.SignInRequest
 import com.studystream.shared.payload.response.AuthResponse
 import io.ktor.server.application.*
 import io.ktor.server.request.*
-import io.ktor.server.resources.*
 import io.ktor.server.response.*
-import io.ktor.server.routing.Routing
+import io.ktor.server.routing.*
 import org.koin.ktor.ext.get
 
 internal fun Routing.installSignInRoute() {
-    post<AuthRoute.SignInRoute> {
+    typeSafePost<AuthRoute.SignInRoute> {
         val result = signInRoute(
             body = call.receive(),
             authService = call.get(),

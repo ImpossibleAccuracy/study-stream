@@ -5,10 +5,10 @@ import com.studystream.app.domain.service.ProfileService
 import com.studystream.app.server.feature.profile.Profiles
 import com.studystream.app.server.mapper.toDto
 import com.studystream.app.server.security.requireAccount
+import com.studystream.app.server.utils.typeSafeGet
 import com.studystream.shared.payload.dto.ProfileDto
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
-import io.ktor.server.resources.post
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.get
@@ -16,7 +16,7 @@ import org.koin.ktor.ext.get
 
 internal fun Routing.installGetProfilesListRoute() {
     authenticate {
-        post<Profiles> {
+        typeSafeGet<Profiles> {
             val result = getProfilesList(
                 account = call.requireAccount(),
                 profileService = call.get(),

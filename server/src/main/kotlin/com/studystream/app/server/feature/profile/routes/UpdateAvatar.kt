@@ -9,17 +9,17 @@ import com.studystream.app.domain.service.FileStorageService
 import com.studystream.app.domain.service.ProfileService
 import com.studystream.app.server.feature.profile.Profiles
 import com.studystream.app.server.utils.receiveFile
+import com.studystream.app.server.utils.typeSafePut
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
-import io.ktor.server.resources.put
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.get
 
 internal fun Routing.installUpdateProfileAvatarRoute() {
     authenticate {
-        put<Profiles.Id> { route ->
+        typeSafePut<Profiles.Id> { route ->
             updateProfileAvatar(
                 avatar = call
                     .receiveFile(
@@ -52,6 +52,7 @@ suspend fun updateProfileAvatar(
         .store(avatar, StorageCatalog.Temp)
         .getOrThrow()
 
+    // TODO: add permissions check
     return profileService
         .updateAvatar(
             profileId = profileId,
