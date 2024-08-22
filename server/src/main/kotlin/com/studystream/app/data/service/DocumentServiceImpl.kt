@@ -8,23 +8,24 @@ import com.studystream.app.data.database.utils.runCatchingTransaction
 import com.studystream.app.data.database.utils.runSuspendedTransaction
 import com.studystream.app.domain.model.Document
 import com.studystream.app.domain.service.DocumentService
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.deleteWhere
 
-class DocumentServiceImpl : DocumentService {
+class DocumentServiceImpl(
+    private val documentDao: DocumentDao,
+    private val documentTypeDao: DocumentTypeDao,
+) : DocumentService {
     override suspend fun save(title: String, hash: String, path: String, type: Document.Type): Result<Document> =
         runCatchingTransaction {
-            DocumentDao.new {
+            documentDao.new {
                 this.title = title
                 this.hash = hash
                 this.path = path
-                this.type = DocumentTypeDao.findById(type.id)!!
+                this.type = documentTypeDao.findById(type.id)!!
             }
         }
 
     override suspend fun saveType(title: String, mimeType: String): Result<Document.Type> =
         runCatchingTransaction {
-            DocumentTypeDao.new {
+            documentTypeDao.new {
                 this.title = title
                 this.mimeType = mimeType
             }
@@ -32,12 +33,12 @@ class DocumentServiceImpl : DocumentService {
 
     override suspend fun findById(id: Int): Document? =
         runSuspendedTransaction {
-            DocumentDao.findById(id)
+            documentDao.findById(id)
         }
 
     override suspend fun findByHash(hash: String): Document? =
         runSuspendedTransaction {
-            DocumentDao
+            documentDao
                 .find {
                     DocumentTable.hash eq hash
                 }
@@ -46,7 +47,7 @@ class DocumentServiceImpl : DocumentService {
 
     override suspend fun findTypeByMimeType(mimeType: String): Document.Type? =
         runSuspendedTransaction {
-            DocumentTypeDao
+            documentTypeDao
                 .find {
                     DocumentTypeTable.mimeType eq mimeType
                 }
@@ -55,17 +56,15 @@ class DocumentServiceImpl : DocumentService {
 
     override suspend fun update(document: Document): Result<Document> =
         runCatchingTransaction {
-            DocumentDao.findByIdAndUpdate(document.id.value) {
+            documentDao.findByIdAndUpdate(document.id.value) {
                 it.title = document.title
                 it.hash = document.hash
                 it.path = document.path
-                it.type = DocumentTypeDao.findById(document.type.id)!!
+                it.type = documentTypeDao.findById(document.type.id)!!
             }!!
         }
 
     override suspend fun delete(id: Int): Result<Unit> = runCatchingTransaction {
-        DocumentTable.deleteWhere {
-            DocumentTable.id eq id
-        }
+        documentDao.findById(id)?.delete()
     }
 }

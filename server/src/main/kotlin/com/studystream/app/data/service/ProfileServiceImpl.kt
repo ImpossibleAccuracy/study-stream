@@ -15,7 +15,9 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.neq
 import org.jetbrains.exposed.sql.and
 
-class ProfileServiceImpl : ProfileService {
+class ProfileServiceImpl(
+    private val profileDao: ProfileDao,
+) : ProfileService {
     override suspend fun createProfile(
         owner: Account,
         name: String,
@@ -24,7 +26,7 @@ class ProfileServiceImpl : ProfileService {
         birthday: LocalDate,
         avatar: Document?
     ): Result<Profile> = runCatchingTransaction {
-        ProfileDao.new {
+        profileDao.new {
             this.name = name
             this.surname = surname
             this.patronymic = patronymic
@@ -35,15 +37,15 @@ class ProfileServiceImpl : ProfileService {
     }
 
     override suspend fun getProfile(id: Id): Profile? = runSuspendedTransaction {
-        ProfileDao.findById(id)
+        profileDao.findById(id)
     }
 
     override suspend fun getProfiles(): List<Profile> = runSuspendedTransaction {
-        ProfileDao.all().toList()
+        profileDao.all().toList()
     }
 
     override suspend fun getProfilesByOwner(ownerId: Id): List<Profile> = runSuspendedTransaction {
-        ProfileDao
+        profileDao
             .find {
                 ProfileTable.accountId eq ownerId
             }
@@ -51,7 +53,7 @@ class ProfileServiceImpl : ProfileService {
     }
 
     override suspend fun existsProfile(id: Id): Boolean = runSuspendedTransaction {
-        ProfileDao.exists(ProfileTable.id eq id)
+        profileDao.exists(ProfileTable.id eq id)
     }
 
     override suspend fun existsProfile(
@@ -62,7 +64,7 @@ class ProfileServiceImpl : ProfileService {
         excludeProfileId: Id?,
     ): Boolean =
         runSuspendedTransaction {
-            ProfileDao.exists(
+            profileDao.exists(
                 (ProfileTable.accountId eq accountId) and
                         (ProfileTable.name eq name) and
                         (ProfileTable.surname eq surname) and
@@ -78,7 +80,7 @@ class ProfileServiceImpl : ProfileService {
         patronymic: String?,
         birthday: LocalDate
     ): Result<Profile> = runCatchingTransaction {
-        ProfileDao.findByIdAndUpdate(profileId) {
+        profileDao.findByIdAndUpdate(profileId) {
             it.name = name
             it.surname = surname
             it.patronymic = patronymic
@@ -87,12 +89,12 @@ class ProfileServiceImpl : ProfileService {
     }
 
     override suspend fun updateAvatar(profileId: Id, avatar: Document?): Result<Unit> = runCatchingTransaction {
-        ProfileDao.findByIdAndUpdate(profileId) {
+        profileDao.findByIdAndUpdate(profileId) {
             it.avatarId = avatar?.id
         }
     }
 
     override suspend fun deleteProfile(profileId: Id): Result<Unit> = runCatchingTransaction {
-        ProfileDao.findById(profileId)!!.delete()
+        profileDao.findById(profileId)!!.delete()
     }
 }

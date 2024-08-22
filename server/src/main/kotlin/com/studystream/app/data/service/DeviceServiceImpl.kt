@@ -8,7 +8,9 @@ import com.studystream.app.domain.model.Device
 import com.studystream.app.domain.service.DeviceService
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
-class DeviceServiceImpl : DeviceService {
+class DeviceServiceImpl(
+    private val deviceDao: DeviceDao,
+) : DeviceService {
     override suspend fun saveDevice(
         owner: Account,
         name: String?,
@@ -23,7 +25,7 @@ class DeviceServiceImpl : DeviceService {
         token: String,
         name: String?,
         type: Device.Type
-    ) = DeviceDao.findSingleByAndUpdate(DeviceTable.token eq token) {
+    ) = deviceDao.findSingleByAndUpdate(DeviceTable.token eq token) {
         it.name = name
         it.type = type
     }
@@ -33,7 +35,7 @@ class DeviceServiceImpl : DeviceService {
         name: String?,
         token: String,
         type: Device.Type
-    ) = DeviceDao.new {
+    ) = deviceDao.new {
         this.owner = owner
         this.name = name
         this.token = token
