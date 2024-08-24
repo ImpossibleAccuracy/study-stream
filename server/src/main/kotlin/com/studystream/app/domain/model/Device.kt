@@ -19,5 +19,10 @@ class Device(id: EntityID<Id>) : IntEntity(id) {
         WINDOWS,
         WEB,
         NOT_SPECIFIED;
+
+        fun nullIfNotSpecified(): Type? = when (this) {
+            NOT_SPECIFIED -> null
+            else -> this
+        }
     }
 }

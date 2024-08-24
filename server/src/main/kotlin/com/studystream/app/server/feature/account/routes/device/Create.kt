@@ -5,6 +5,7 @@ import com.studystream.app.domain.model.Account
 import com.studystream.app.domain.service.DeviceService
 import com.studystream.app.server.feature.account.Accounts
 import com.studystream.app.server.mapper.toDto
+import com.studystream.app.server.mapper.fromDto
 import com.studystream.app.server.security.requireAccount
 import com.studystream.app.server.utils.typeSafePost
 import com.studystream.shared.payload.dto.DeviceDto
@@ -40,7 +41,7 @@ suspend fun createProfile(
             owner = account,
             name = body.name,
             token = body.token,
-            type = body.type.toDto(),
+            type = body.type.fromDto(),
         )
         .getOrThrow()
         .toDto()

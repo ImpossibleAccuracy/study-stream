@@ -16,4 +16,5 @@ val databaseModule = module {
     single { DocumentDao }
     single { DocumentTypeDao }
     single { DeviceDao }
+    single { DeviceTypeDao }
 }
