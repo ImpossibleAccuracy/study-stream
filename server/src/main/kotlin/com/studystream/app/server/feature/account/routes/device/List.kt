@@ -45,7 +45,7 @@ suspend fun getDevicesList(
     deviceService
         .getDevices(
             filters = DeviceService.Filters(
-                ownerId = ownerId ?: account.id.value,
+                ownerId = ownerId ?: account.idValue,
                 deviceType = deviceType,
             )
         )

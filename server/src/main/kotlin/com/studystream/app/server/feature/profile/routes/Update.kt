@@ -39,7 +39,7 @@ suspend fun updateProfile(
         ?: throw ResourceNotFoundException("Profile not found")
 
     if (profileService.existsProfile(
-            accountId = profile.accountId.value,
+            accountId = profile.account.idValue,
             name = body.name,
             surname = body.surname,
             patronymic = body.patronymic,

@@ -1,9 +1,9 @@
 package com.studystream.app.data.database.tables
 
-import org.jetbrains.exposed.dao.id.IntIdTable
+import com.studystream.app.data.database.base.BaseTable
 import org.jetbrains.exposed.sql.kotlin.datetime.date
 
-object ProfileTable : IntIdTable("profile") {
+object ProfileTable : BaseTable("profile") {
     val name = varchar("name", 255)
     val surname = varchar("surname", 255)
     val patronymic = varchar("patronymic", 255).nullable()

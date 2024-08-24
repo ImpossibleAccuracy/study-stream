@@ -1,11 +1,15 @@
 CREATE TABLE `document_type` (
   `id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP,
   `title` varchar(255) NOT NULL,
   `mime_type` varchar(255) NOT NULL
 );
 
 CREATE TABLE `document` (
   `id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP,
   `title` varchar(255) NOT NULL,
   `hash` varchar(255) NOT NULL,
   `path` varchar(2048) NOT NULL,
@@ -14,22 +18,28 @@ CREATE TABLE `document` (
 
 CREATE TABLE `privilege` (
   `id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
-  `title` varchar(255) NOT NULL
+  `title` varchar(255) NOT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE `role` (
   `id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
-  `title` varchar(255) NOT NULL
+  `title` varchar(255) NOT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE `account` (
   `id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP,
   `username` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL
 );
 
 CREATE TABLE `profile` (
   `id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP,
   `account_id` int NOT NULL,
   `name` varchar(255) NOT NULL,
   `surname` varchar(255) NOT NULL,
@@ -39,12 +49,14 @@ CREATE TABLE `profile` (
 );
 
 CREATE TABLE `role_account` (
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `role_id` int NOT NULL,
   `account_id` int NOT NULL,
   PRIMARY KEY (`role_id`, `account_id`)
 );
 
 CREATE TABLE `privilege_role` (
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `role_id` int NOT NULL,
   `privilege_id` int NOT NULL,
   PRIMARY KEY (`role_id`, `privilege_id`)
@@ -52,11 +64,14 @@ CREATE TABLE `privilege_role` (
 
 CREATE TABLE `device_type` (
   `id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `title` varchar(255) NOT NULL
 );
 
 CREATE TABLE `device` (
   `id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP,
   `account_id` int NOT NULL,
   `name` varchar(255),
   `token` varchar(255) NOT NULL,
@@ -65,6 +80,8 @@ CREATE TABLE `device` (
 
 CREATE TABLE `placement` (
   `id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP,
   `city` varchar(255) NOT NULL,
   `address` varchar(255) NOT NULL,
   `latitude` double NOT NULL,
@@ -74,6 +91,8 @@ CREATE TABLE `placement` (
 
 CREATE TABLE `event` (
   `id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP,
   `creator_id` int NOT NULL,
   `placement_id` int NOT NULL,
   `teacher_id` int NOT NULL,
@@ -87,11 +106,14 @@ CREATE TABLE `event` (
 
 CREATE TABLE `schedule_status` (
   `id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `title` varchar(255) NOT NULL
 );
 
 CREATE TABLE `schedule` (
   `id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP,
   `creator_id` int NOT NULL,
   `event_id` int NOT NULL,
   `day_of_week` int NOT NULL,
@@ -102,11 +124,14 @@ CREATE TABLE `schedule` (
 
 CREATE TABLE `event_exception_type` (
   `id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `title` varchar(255) NOT NULL
 );
 
 CREATE TABLE `event_exception` (
   `id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP,
   `creator_id` int NOT NULL,
   `event_id` int NOT NULL,
   `type_id` int NOT NULL,
@@ -115,6 +140,8 @@ CREATE TABLE `event_exception` (
 
 CREATE TABLE `ticket_type` (
   `id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP,
   `creator_id` int NOT NULL,
   `title` varchar(255) NOT NULL,
   `description` varchar(255) NOT NULL,
@@ -124,6 +151,8 @@ CREATE TABLE `ticket_type` (
 
 CREATE TABLE `ticket` (
   `id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP,
   `creator_id` int NOT NULL,
   `profile_id` int NOT NULL,
   `type_id` int NOT NULL,
@@ -133,10 +162,13 @@ CREATE TABLE `ticket` (
 
 CREATE TABLE `schedule_attendee_status` (
   `id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `title` varchar(255) NOT NULL
 );
 
 CREATE TABLE `schedule_attendee` (
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP,
   `schedule_id` int NOT NULL,
   `profile_id` int NOT NULL,
   `creator_id` int NOT NULL,

@@ -37,7 +37,7 @@ suspend fun updateMeRoute(
     accountService: AccountService,
 ): AccountDto = accountService
     .updateUser(
-        id = account.id.value,
+        id = account.idValue,
         username = data.username
     )
     .getOrThrow()

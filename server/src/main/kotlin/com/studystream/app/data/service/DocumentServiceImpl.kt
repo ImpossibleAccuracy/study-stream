@@ -56,7 +56,7 @@ class DocumentServiceImpl(
 
     override suspend fun update(document: Document): Result<Document> =
         runCatchingTransaction {
-            documentDao.findByIdAndUpdate(document.id.value) {
+            documentDao.findByIdAndUpdate(document.idValue) {
                 it.title = document.title
                 it.hash = document.hash
                 it.path = document.path

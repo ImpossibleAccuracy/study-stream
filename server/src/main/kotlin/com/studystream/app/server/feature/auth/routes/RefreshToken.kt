@@ -42,7 +42,7 @@ suspend fun refreshTokenRoute(
     .getOrThrow()
     .let {
         AuthResponse(
-            id = it.account.id.value,
+            id = it.account.idValue,
             token = it.token,
         )
     }

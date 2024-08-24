@@ -162,7 +162,7 @@ class FileStorageServiceImpl(
         val file = Path.of(document.path)
         file.deleteIfExists()
 
-        documentService.delete(document.id.value)
+        documentService.delete(document.idValue)
             .onSuccess {
                 logger.debug("File \"${file.name}\" deleted")
             }

@@ -1,8 +1,8 @@
 package com.studystream.app.data.database.tables
 
-import org.jetbrains.exposed.dao.id.IntIdTable
+import com.studystream.app.data.database.base.BaseTable
 
-object AccountTable : IntIdTable("account") {
+object AccountTable : BaseTable("account") {
     val username = varchar("username", 255)
     val password = varchar("password", 255)
 }

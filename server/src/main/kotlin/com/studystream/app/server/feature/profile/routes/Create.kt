@@ -42,7 +42,7 @@ suspend fun createProfile(
     val profileAccount = body.accountId?.let { accountService.findUser(it) } ?: account
 
     if (profileService.existsProfile(
-            accountId = profileAccount.id.value,
+            accountId = profileAccount.idValue,
             name = body.name,
             surname = body.surname,
             patronymic = body.patronymic

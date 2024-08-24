@@ -5,7 +5,7 @@ import com.studystream.shared.payload.dto.DeviceDto
 import com.studystream.shared.payload.dto.DeviceTypeDto
 
 fun Device.toDto() = DeviceDto(
-    id = id.value,
+    id = idValue,
     name = name,
     type = type.toDto()
 )

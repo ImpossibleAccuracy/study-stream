@@ -34,7 +34,7 @@ suspend fun signInRoute(
         .getOrThrow()
 
     return AuthResponse(
-        id = user.id.value,
+        id = user.idValue,
         token = tokenService.generate(user).getOrThrow(),
     )
 }

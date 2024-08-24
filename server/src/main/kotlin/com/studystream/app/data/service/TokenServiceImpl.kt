@@ -50,7 +50,7 @@ class TokenServiceImpl(
         JWT.create()
             .withAudience(tokenProperties.audience)
             .withIssuer(tokenProperties.issuer)
-            .withClaim(tokenProperties.claimName, account.id.value.toString())
+            .withClaim(tokenProperties.claimName, account.idValue.toString())
             .withExpiresAt(Date(System.currentTimeMillis() + tokenProperties.ttl))
             .sign(Algorithm.HMAC256(tokenProperties.secret))
     }
