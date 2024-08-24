@@ -2,6 +2,7 @@ package com.studystream.app.data.service
 
 import com.studystream.app.data.database.dao.TicketDao
 import com.studystream.app.data.database.tables.TicketTable
+import com.studystream.app.data.database.tables.TicketTypeTable
 import com.studystream.app.data.database.utils.exists
 import com.studystream.app.data.database.utils.runCatchingTransaction
 import com.studystream.app.data.database.utils.runSuspendedTransaction
@@ -66,7 +67,7 @@ class TicketServiceImpl(
     }
 
     override suspend fun existsTicketType(typeId: Id): Boolean = runSuspendedTransaction {
-        ticketTypeDao.exists(TicketTable.id eq typeId)
+        ticketTypeDao.exists(TicketTypeTable.id eq typeId)
     }
 
     override suspend fun updateTicketType(

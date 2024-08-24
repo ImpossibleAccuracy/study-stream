@@ -10,7 +10,7 @@ data class UpsertTicketTypeRequest(
     @SerialName("description")
     val description: String,
     @SerialName("total_events")
-    val totalEvents: Int?,
+    val totalEvents: Int? = null,
     @SerialName("duration_days")
-    val durationDays: Int?,
+    val durationDays: Int? = null,
 )
