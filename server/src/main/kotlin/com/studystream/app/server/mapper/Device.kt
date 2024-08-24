@@ -13,7 +13,7 @@ fun Device.toDto() = DeviceDto(
 fun DeviceTypeDto?.toDto(): Device.Type = when (this) {
     DeviceTypeDto.ANDROID -> Device.Type.ANDROID
     DeviceTypeDto.IOS -> Device.Type.IOS
-    DeviceTypeDto.WINDOWS -> Device.Type.WEB
+    DeviceTypeDto.WINDOWS -> Device.Type.WINDOWS
     DeviceTypeDto.WEB -> Device.Type.WEB
     null -> Device.Type.NOT_SPECIFIED
 }
@@ -21,7 +21,7 @@ fun DeviceTypeDto?.toDto(): Device.Type = when (this) {
 fun Device.Type.toDto(): DeviceTypeDto? = when (this) {
     Device.Type.ANDROID -> DeviceTypeDto.ANDROID
     Device.Type.IOS -> DeviceTypeDto.IOS
-    Device.Type.WINDOWS -> DeviceTypeDto.WEB
+    Device.Type.WINDOWS -> DeviceTypeDto.WINDOWS
     Device.Type.WEB -> DeviceTypeDto.WEB
     Device.Type.NOT_SPECIFIED -> null
 }
