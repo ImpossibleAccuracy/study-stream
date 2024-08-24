@@ -1,6 +1,8 @@
 package com.studystream.app.server.feature.ticket
 
+import com.studystream.app.domain.exception.ResourceNotFoundException
 import com.studystream.app.domain.model.Id
+import com.studystream.app.domain.service.TicketService
 import com.studystream.app.server.feature.BaseRoutes
 import io.ktor.resources.*
 import kotlinx.serialization.SerialName
@@ -21,4 +23,28 @@ class Tickets(
         val typeId: Id? = null,
         @Suppress("unused") val parent: Tickets = Tickets()
     )
+
+    @Resource("/type")
+    class Types(
+        @Suppress("unused") val parent: Tickets = Tickets()
+    ) {
+        @Resource("")
+        class List(
+            @Suppress("unused") val parent: Types = Types()
+        )
+
+        @Serializable
+        @Resource("/{id}")
+        class TypeId(
+            @SerialName("id")
+            val id: Id,
+            @Suppress("unused") val parent: Types = Types()
+        ) {
+            suspend fun verify(ticketService: TicketService) {
+                if (!ticketService.existsTicketType(id)) {
+                    throw ResourceNotFoundException("Ticket not found")
+                }
+            }
+        }
+    }
 }
