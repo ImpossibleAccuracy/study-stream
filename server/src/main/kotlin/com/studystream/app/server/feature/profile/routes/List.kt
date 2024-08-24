@@ -15,7 +15,7 @@ import org.koin.ktor.ext.get
 
 internal fun Routing.installGetProfilesListRoute() {
     authenticate {
-        typeSafeGet<Profiles> { route ->
+        typeSafeGet<Profiles.List> { route ->
             val result = getProfilesList(
                 ownerId = route.ownerId,
                 profileService = call.get(),

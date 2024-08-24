@@ -9,7 +9,6 @@ import com.studystream.app.domain.model.Id as DomainId
 
 @Resource("/profile")
 class Profiles(
-    val ownerId: Id? = null,
     @Suppress("unused") val parent: BaseRoutes = BaseRoutes()
 ) {
     companion object {
@@ -17,6 +16,14 @@ class Profiles(
         const val DEFAULT_AVATAR_FILENAME = "avatar"
         const val DEFAULT_AVATAR_EXTENSION = "jpg"
     }
+
+    @Serializable
+    @Resource("")
+    class List(
+        @SerialName("owner_id")
+        val ownerId: Id? = null,
+        @Suppress("unused") val parent: Profiles = Profiles()
+    )
 
     @Serializable
     @Resource("/{id}")

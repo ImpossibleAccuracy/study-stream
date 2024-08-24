@@ -12,6 +12,7 @@ import com.studystream.app.domain.service.AuthService
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 class AuthServiceImpl(
+    private val accountDao: AccountDao,
     private val accountService: AccountService,
     private val passwordManager: PasswordManager,
 ) : AuthService {
@@ -27,13 +28,13 @@ class AuthServiceImpl(
     }
 
     override suspend fun signUp(username: String, password: String): Result<Account> = runCatchingTransaction {
-        if (AccountDao.exists(AccountTable.username eq username)) {
+        if (accountDao.exists(AccountTable.username eq username)) {
             throw ResourceNotFoundException("Username already used")
         }
 
         val encryptedPassword = passwordManager.encrypt(password)
 
-        AccountDao.new {
+        accountDao.new {
             this.username = username
             this.password = encryptedPassword
         }

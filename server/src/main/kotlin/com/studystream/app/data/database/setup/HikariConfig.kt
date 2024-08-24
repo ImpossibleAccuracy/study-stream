@@ -5,6 +5,8 @@ import com.zaxxer.hikari.HikariConfig
 
 private const val MYSQL_DRIVER = "com.mysql.cj.jdbc.Driver"
 
+private const val TRANSACTION_ISOLATION = "TRANSACTION_READ_COMMITTED"
+
 fun createHikariConfig(properties: DatabaseProperties) =
     HikariConfig().apply {
         jdbcUrl = properties.url
@@ -13,5 +15,5 @@ fun createHikariConfig(properties: DatabaseProperties) =
         password = properties.password
         maximumPoolSize = properties.poolSize
         isReadOnly = false
-        transactionIsolation = "TRANSACTION_SERIALIZABLE"
+        transactionIsolation = TRANSACTION_ISOLATION
     }

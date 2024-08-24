@@ -10,13 +10,15 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.update
 
-class AccountServiceImpl : AccountService {
+class AccountServiceImpl(
+    private val accountDao: AccountDao,
+) : AccountService {
     override suspend fun findUser(id: Int): Account? = runSuspendedTransaction {
-        AccountDao.findById(id)
+        accountDao.findById(id)
     }
 
     override suspend fun findUser(username: String): Account? = runSuspendedTransaction {
-        AccountDao
+        accountDao
             .find { AccountTable.username eq username }
             .firstOrNull()
     }
@@ -31,7 +33,7 @@ class AccountServiceImpl : AccountService {
                 it[AccountTable.username] = username
             }
 
-        AccountDao[id]
+        accountDao[id]
     }
 
     override suspend fun deleteUser(id: Int): Result<Unit> = runCatchingTransaction {
