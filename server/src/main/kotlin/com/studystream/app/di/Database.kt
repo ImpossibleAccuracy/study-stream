@@ -4,8 +4,8 @@ import com.studystream.app.data.database.dao.*
 import com.studystream.app.data.database.setup.createDatabase
 import org.koin.dsl.module
 
-val databaseModule = module {
-    single(createdAtStart = true) {
+val databaseModule = module(createdAtStart = true) {
+    single {
         createDatabase(
             properties = get(),
         )
@@ -17,4 +17,6 @@ val databaseModule = module {
     single { DocumentTypeDao }
     single { DeviceDao }
     single { DeviceTypeDao }
+    single { TicketDao }
+    single { TicketDao.TypeDao }
 }

@@ -12,9 +12,9 @@ class Profile(id: EntityID<Id>) : BaseModel(id, ProfileTable) {
     var surname: String by ProfileTable.surname
     var patronymic: String? by ProfileTable.patronymic
     var birthday: LocalDate by ProfileTable.birthday
-    var accountId by ProfileTable.accountId
-    var avatarId by ProfileTable.avatarId
-
     var account: Account by AccountDao referencedOn ProfileTable.accountId
     var avatar: Document? by DocumentDao optionalReferencedOn ProfileTable.avatarId
+
+    var accountId by ProfileTable.accountId
+    var avatarId by ProfileTable.avatarId
 }

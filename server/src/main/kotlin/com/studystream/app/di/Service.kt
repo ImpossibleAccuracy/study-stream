@@ -15,4 +15,5 @@ val serviceModule = module {
     single { new(::FileStorageServiceImpl) } bind FileStorageService::class
     single { new(::ProfileServiceImpl) } bind ProfileService::class
     single { new(::DeviceServiceImpl) } bind DeviceService::class
+    single { new(::TicketServiceImpl) } bind TicketService::class
 }

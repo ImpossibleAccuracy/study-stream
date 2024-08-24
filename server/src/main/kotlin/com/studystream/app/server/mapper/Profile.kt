@@ -10,5 +10,5 @@ fun Profile.toDto() = ProfileDto(
     patronymic = patronymic,
     birthday = birthday,
     accountId = account.idValue,
-    avatarId = avatarId?.value,
+    avatarId = avatar?.idValue,
 )
