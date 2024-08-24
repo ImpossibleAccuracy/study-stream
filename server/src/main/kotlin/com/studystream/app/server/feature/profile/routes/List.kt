@@ -1,6 +1,5 @@
 package com.studystream.app.server.feature.profile.routes
 
-import com.studystream.app.domain.model.Id
 import com.studystream.app.domain.service.ProfileService
 import com.studystream.app.server.feature.profile.Profiles
 import com.studystream.app.server.mapper.toDto
@@ -17,7 +16,7 @@ internal fun Routing.installGetProfilesListRoute() {
     authenticate {
         typeSafeGet<Profiles.List> { route ->
             val result = getProfilesList(
-                ownerId = route.ownerId,
+                route = route,
                 profileService = call.get(),
             )
 
@@ -27,16 +26,16 @@ internal fun Routing.installGetProfilesListRoute() {
 }
 
 suspend fun getProfilesList(
-    ownerId: Id?,
+    route: Profiles.List,
     profileService: ProfileService,
 ): List<ProfileDto> {
     // TODO: add permissions check
     // If account is admin -> can get all profiles
     // Else ownerId is replaced by account.id
-    val items = when (ownerId) {
+    val items = when (route.ownerId) {
         null -> profileService.getProfiles()
 
-        else -> profileService.getProfilesByOwner(ownerId)
+        else -> profileService.getProfilesByOwner(route.ownerId)
     }
 
     return items.map {

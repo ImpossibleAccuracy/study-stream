@@ -1,7 +1,5 @@
 package com.studystream.app.server.feature.profile.routes.avatar
 
-import com.studystream.app.domain.exception.ResourceNotFoundException
-import com.studystream.app.domain.model.Id
 import com.studystream.app.domain.service.ProfileService
 import com.studystream.app.server.feature.profile.Profiles
 import com.studystream.app.server.utils.typeSafeDelete
@@ -16,7 +14,7 @@ internal fun Routing.installDeleteProfileAvatarRoute() {
     authenticate {
         typeSafeDelete<Profiles.ProfileId.Avatar> { route ->
             deleteProfileAvatar(
-                profileId = route.parent.id,
+                route = route,
                 profileService = call.get(),
             )
 
@@ -26,17 +24,15 @@ internal fun Routing.installDeleteProfileAvatarRoute() {
 }
 
 suspend fun deleteProfileAvatar(
-    profileId: Id,
+    route: Profiles.ProfileId.Avatar,
     profileService: ProfileService,
 ) {
-    if (!profileService.existsProfile(profileId)) {
-        throw ResourceNotFoundException("Profile not found")
-    }
+    route.verify(profileService)
 
     // TODO: add permissions check
     return profileService
         .updateAvatar(
-            profileId = profileId,
+            profileId = route.parent.id,
             avatar = null,
         )
         .getOrThrow()

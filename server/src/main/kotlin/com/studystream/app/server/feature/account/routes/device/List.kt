@@ -2,8 +2,6 @@ package com.studystream.app.server.feature.account.routes.device
 
 import com.studystream.app.data.database.utils.runSuspendedTransaction
 import com.studystream.app.domain.model.Account
-import com.studystream.app.domain.model.Device
-import com.studystream.app.domain.model.Id
 import com.studystream.app.domain.service.DeviceService
 import com.studystream.app.server.feature.account.Accounts
 import com.studystream.app.server.mapper.fromDto
@@ -22,8 +20,7 @@ internal fun Routing.installGetDevicesListRoute() {
     authenticate {
         typeSafeGet<Accounts.Device.List> { route ->
             val result = getDevicesList(
-                ownerId = route.ownerId,
-                deviceType = route.deviceType.fromDto().nullIfNotSpecified(),
+                route = route,
                 account = call.requireAccount(),
                 deviceService = call.get(),
             )
@@ -34,8 +31,7 @@ internal fun Routing.installGetDevicesListRoute() {
 }
 
 suspend fun getDevicesList(
-    ownerId: Id?,
-    deviceType: Device.Type?,
+    route: Accounts.Device.List,
     account: Account,
     deviceService: DeviceService,
 ): List<DeviceDto> = runSuspendedTransaction {
@@ -45,8 +41,8 @@ suspend fun getDevicesList(
     deviceService
         .getDevices(
             filters = DeviceService.Filters(
-                ownerId = ownerId ?: account.idValue,
-                deviceType = deviceType,
+                ownerId = route.ownerId ?: account.idValue,
+                deviceType = route.deviceType.fromDto().nullIfNotSpecified(),
             )
         )
         .map {

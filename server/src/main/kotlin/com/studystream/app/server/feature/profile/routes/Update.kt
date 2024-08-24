@@ -2,7 +2,6 @@ package com.studystream.app.server.feature.profile.routes
 
 import com.studystream.app.domain.exception.InvalidInputException
 import com.studystream.app.domain.exception.ResourceNotFoundException
-import com.studystream.app.domain.model.Id
 import com.studystream.app.domain.service.ProfileService
 import com.studystream.app.server.feature.profile.Profiles
 import com.studystream.app.server.mapper.toDto
@@ -20,7 +19,7 @@ internal fun Routing.installUpdateProfileRoute() {
     authenticate {
         typeSafePut<Profiles.ProfileId> { route ->
             val result = updateProfile(
-                profileId = route.id,
+                route = route,
                 body = call.receive(),
                 profileService = call.get(),
             )
@@ -31,11 +30,11 @@ internal fun Routing.installUpdateProfileRoute() {
 }
 
 suspend fun updateProfile(
-    profileId: Id,
+    route: Profiles.ProfileId,
     body: UpdateProfileRequest,
     profileService: ProfileService,
 ): ProfileDto {
-    val profile = profileService.getProfile(profileId)
+    val profile = profileService.getProfile(route.id)
         ?: throw ResourceNotFoundException("Profile not found")
 
     if (profileService.existsProfile(
@@ -43,7 +42,7 @@ suspend fun updateProfile(
             name = body.name,
             surname = body.surname,
             patronymic = body.patronymic,
-            excludeProfileId = profileId,
+            excludeProfileId = route.id,
         )
     ) {
         throw InvalidInputException("Profile with such name already exists")
@@ -51,7 +50,7 @@ suspend fun updateProfile(
 
     return profileService
         .updateProfile(
-            profileId = profileId,
+            profileId = route.id,
             name = body.name,
             surname = body.surname,
             patronymic = body.patronymic,

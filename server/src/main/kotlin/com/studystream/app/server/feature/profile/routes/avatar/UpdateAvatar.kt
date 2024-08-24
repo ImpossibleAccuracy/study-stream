@@ -1,8 +1,6 @@
 package com.studystream.app.server.feature.profile.routes.avatar
 
 import com.studystream.app.domain.exception.InvalidInputException
-import com.studystream.app.domain.exception.ResourceNotFoundException
-import com.studystream.app.domain.model.Id
 import com.studystream.app.domain.model.MultipartFile
 import com.studystream.app.domain.model.StorageCatalog
 import com.studystream.app.domain.service.FileStorageService
@@ -28,7 +26,7 @@ internal fun Routing.installUpdateProfileAvatarRoute() {
                         Profiles.DEFAULT_AVATAR_EXTENSION
                     )
                     ?: throw InvalidInputException("No avatar presented"),
-                profileId = route.parent.id,
+                route = route,
                 profileService = call.get(),
                 fileStorageService = call.get(),
             )
@@ -40,13 +38,11 @@ internal fun Routing.installUpdateProfileAvatarRoute() {
 
 suspend fun updateProfileAvatar(
     avatar: MultipartFile,
-    profileId: Id,
+    route: Profiles.ProfileId.Avatar,
     profileService: ProfileService,
     fileStorageService: FileStorageService,
 ) {
-    if (!profileService.existsProfile(profileId)) {
-        throw ResourceNotFoundException("Profile not found")
-    }
+    route.verify(profileService)
 
     val avatarDocument = fileStorageService
         .store(avatar, StorageCatalog.Temp)
@@ -55,7 +51,7 @@ suspend fun updateProfileAvatar(
     // TODO: add permissions check
     return profileService
         .updateAvatar(
-            profileId = profileId,
+            profileId = route.parent.id,
             avatar = avatarDocument,
         )
         .onSuccess {
