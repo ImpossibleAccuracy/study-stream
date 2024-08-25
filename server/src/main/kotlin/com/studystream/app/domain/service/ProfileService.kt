@@ -16,7 +16,7 @@ interface ProfileService {
         avatar: Document?,
     ): Result<Profile>
 
-    suspend fun getProfile(id: Id): Profile?
+    suspend fun getProfile(id: Id): Result<Profile>
 
     suspend fun getProfiles(): List<Profile>
 

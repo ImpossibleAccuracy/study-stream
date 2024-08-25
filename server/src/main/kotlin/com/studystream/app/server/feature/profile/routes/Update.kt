@@ -1,7 +1,7 @@
 package com.studystream.app.server.feature.profile.routes
 
+import com.studystream.app.data.database.utils.runSuspendedTransaction
 import com.studystream.app.domain.exception.InvalidInputException
-import com.studystream.app.domain.exception.ResourceNotFoundException
 import com.studystream.app.domain.service.ProfileService
 import com.studystream.app.server.feature.profile.Profiles
 import com.studystream.app.server.mapper.toDto
@@ -33,9 +33,8 @@ suspend fun updateProfile(
     route: Profiles.ProfileId,
     body: UpdateProfileRequest,
     profileService: ProfileService,
-): ProfileDto {
-    val profile = profileService.getProfile(route.id)
-        ?: throw ResourceNotFoundException("Profile not found")
+): ProfileDto = runSuspendedTransaction {
+    val profile = profileService.getProfile(route.id).getOrThrow()
 
     if (profileService.existsProfile(
             accountId = profile.account.idValue,
@@ -48,7 +47,7 @@ suspend fun updateProfile(
         throw InvalidInputException("Profile with such name already exists")
     }
 
-    return profileService
+    profileService
         .updateProfile(
             profileId = route.id,
             name = body.name,

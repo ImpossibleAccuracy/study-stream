@@ -29,5 +29,5 @@ suspend fun deleteMeRoute(
     account: Account,
     accountService: AccountService,
 ) = accountService
-    .deleteUser(id = account.idValue)
+    .deleteAccount(id = account.idValue)
     .getOrThrow()

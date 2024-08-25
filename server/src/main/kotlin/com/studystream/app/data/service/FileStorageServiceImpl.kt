@@ -125,13 +125,14 @@ class FileStorageServiceImpl(
             ?: URLConnection.guessContentTypeFromName(file.name)
             ?: DEFAULT_MIME_TYPE
 
-        return documentService.findTypeByMimeType(mimeType)
-            ?: documentService
+        return documentService.findTypeByMimeType(mimeType).getOrElse {
+            documentService
                 .saveType(
                     title = "From MIME type $mimeType",
                     mimeType = mimeType,
                 )
                 .getOrThrow()
+        }
     }
 
     override suspend fun move(document: Document, catalog: StorageCatalog): Result<Document> = runCatchingTransaction {

@@ -8,6 +8,7 @@ import com.studystream.app.data.database.utils.runCatchingTransaction
 import com.studystream.app.data.database.utils.runSuspendedTransaction
 import com.studystream.app.domain.model.Document
 import com.studystream.app.domain.service.DocumentService
+import com.studystream.app.domain.utils.require
 
 class DocumentServiceImpl(
     private val documentDao: DocumentDao,
@@ -31,11 +32,6 @@ class DocumentServiceImpl(
             }
         }
 
-    override suspend fun findById(id: Int): Document? =
-        runSuspendedTransaction {
-            documentDao.findById(id)
-        }
-
     override suspend fun findByHash(hash: String): Document? =
         runSuspendedTransaction {
             documentDao
@@ -45,13 +41,14 @@ class DocumentServiceImpl(
                 .firstOrNull()
         }
 
-    override suspend fun findTypeByMimeType(mimeType: String): Document.Type? =
-        runSuspendedTransaction {
+    override suspend fun findTypeByMimeType(mimeType: String): Result<Document.Type> =
+        runCatchingTransaction {
             documentTypeDao
                 .find {
                     DocumentTypeTable.mimeType eq mimeType
                 }
                 .firstOrNull()
+                .require()
         }
 
     override suspend fun update(document: Document): Result<Document> =

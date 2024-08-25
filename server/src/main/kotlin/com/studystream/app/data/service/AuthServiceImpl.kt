@@ -17,8 +17,7 @@ class AuthServiceImpl(
     private val passwordManager: PasswordManager,
 ) : AuthService {
     override suspend fun signIn(username: String, password: String): Result<Account> = runCatching {
-        val account = accountService.findUser(username)
-            ?: throw ResourceNotFoundException("Account not found")
+        val account = accountService.getAccount(username).getOrThrow()
 
         if (!passwordManager.match(password, account.password)) {
             throw OperationRejectedException("Password mismatch")
@@ -32,11 +31,11 @@ class AuthServiceImpl(
             throw ResourceNotFoundException("Username already used")
         }
 
-        val encryptedPassword = passwordManager.encrypt(password)
-
-        accountDao.new {
-            this.username = username
-            this.password = encryptedPassword
-        }
+        accountService
+            .createAccount(
+                username = username,
+                password = passwordManager.encrypt(password),
+            )
+            .getOrThrow()
     }
 }

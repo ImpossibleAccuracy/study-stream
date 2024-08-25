@@ -14,7 +14,4 @@ class Profile(id: EntityID<Id>) : BaseModel(id, ProfileTable) {
     var birthday: LocalDate by ProfileTable.birthday
     var account: Account by AccountDao referencedOn ProfileTable.accountId
     var avatar: Document? by DocumentDao optionalReferencedOn ProfileTable.avatarId
-
-    var accountId by ProfileTable.accountId
-    var avatarId by ProfileTable.avatarId
 }

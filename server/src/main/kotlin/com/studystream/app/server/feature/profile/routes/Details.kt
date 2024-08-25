@@ -1,6 +1,6 @@
 package com.studystream.app.server.feature.profile.routes
 
-import com.studystream.app.domain.exception.ResourceNotFoundException
+import com.studystream.app.data.database.utils.runSuspendedTransaction
 import com.studystream.app.domain.service.ProfileService
 import com.studystream.app.server.feature.profile.Profiles
 import com.studystream.app.server.mapper.toDto
@@ -29,9 +29,10 @@ internal fun Routing.installGetProfileDetailsRoute() {
 suspend fun getProfileDetails(
     route: Profiles.ProfileId,
     profileService: ProfileService,
-): ProfileDto =
+): ProfileDto = runSuspendedTransaction {
     // TODO: add permissions check
     profileService
         .getProfile(route.id)
-        ?.toDto()
-        ?: throw ResourceNotFoundException("Profile not found")
+        .getOrThrow()
+        .toDto()
+}

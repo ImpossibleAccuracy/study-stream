@@ -4,7 +4,6 @@ import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.studystream.app.data.utils.ioCall
 import com.studystream.app.domain.exception.OperationRejectedException
-import com.studystream.app.domain.exception.ResourceNotFoundException
 import com.studystream.app.domain.model.Account
 import com.studystream.app.domain.properties.TokenProperties
 import com.studystream.app.domain.service.AccountService
@@ -35,8 +34,7 @@ class TokenServiceImpl(
             .asString()
             .toIntOrNull() ?: throw OperationRejectedException("Invalid token content")
 
-        val account = accountService.findUser(accountId)
-            ?: throw ResourceNotFoundException("User not found")
+        val account = accountService.getAccount(accountId).getOrThrow()
 
         val newToken = generate(account).getOrThrow()
 

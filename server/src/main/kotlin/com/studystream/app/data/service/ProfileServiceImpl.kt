@@ -10,6 +10,7 @@ import com.studystream.app.domain.model.Document
 import com.studystream.app.domain.model.Id
 import com.studystream.app.domain.model.Profile
 import com.studystream.app.domain.service.ProfileService
+import com.studystream.app.domain.utils.require
 import kotlinx.datetime.LocalDate
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.neq
@@ -31,13 +32,13 @@ class ProfileServiceImpl(
             this.surname = surname
             this.patronymic = patronymic
             this.birthday = birthday
-            this.avatarId = avatar?.id
+            this.avatar = avatar
             this.account = owner
         }
     }
 
-    override suspend fun getProfile(id: Id): Profile? = runSuspendedTransaction {
-        profileDao.findById(id)
+    override suspend fun getProfile(id: Id): Result<Profile> = runCatchingTransaction {
+        profileDao.findById(id).require()
     }
 
     override suspend fun getProfiles(): List<Profile> = runSuspendedTransaction {
@@ -90,7 +91,7 @@ class ProfileServiceImpl(
 
     override suspend fun updateAvatar(profileId: Id, avatar: Document?): Result<Unit> = runCatchingTransaction {
         profileDao.findByIdAndUpdate(profileId) {
-            it.avatarId = avatar?.id
+            it.avatar = avatar
         }
     }
 

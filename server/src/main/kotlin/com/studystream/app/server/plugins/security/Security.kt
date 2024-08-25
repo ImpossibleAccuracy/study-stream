@@ -32,7 +32,7 @@ fun Application.configureSecurity(
                     ?.toInt()
                     ?: return@validate null
 
-                val user = accountService.findUser(id)
+                val user = accountService.getAccount(id).getOrNull()
                     ?: return@validate null
 
                 AccountPrincipal(user)

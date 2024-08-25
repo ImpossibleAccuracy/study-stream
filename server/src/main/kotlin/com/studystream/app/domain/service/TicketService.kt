@@ -2,13 +2,14 @@ package com.studystream.app.domain.service
 
 import com.studystream.app.domain.model.Account
 import com.studystream.app.domain.model.Id
+import com.studystream.app.domain.model.Profile
 import com.studystream.app.domain.model.Ticket
 
 interface TicketService {
     suspend fun createTicket(
-        ownerId: Id,
-        profileId: Id,
-        typeId: Id,
+        owner: Account,
+        profile: Profile,
+        type: Ticket.Type,
         isActivated: Boolean
     ): Result<Ticket>
 
@@ -20,9 +21,9 @@ interface TicketService {
         creator: Account,
     ): Result<Ticket.Type>
 
-    suspend fun getTicket(ticketId: Id): Ticket?
+    suspend fun getTicket(ticketId: Id): Result<Ticket>
 
-    suspend fun getTicketType(typeId: Id): Ticket.Type?
+    suspend fun getTicketType(typeId: Id): Result<Ticket.Type>
 
     suspend fun getTickets(filters: Filters): List<Ticket>
 

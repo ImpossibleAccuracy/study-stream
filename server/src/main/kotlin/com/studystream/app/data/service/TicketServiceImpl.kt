@@ -8,8 +8,12 @@ import com.studystream.app.data.database.utils.runCatchingTransaction
 import com.studystream.app.data.database.utils.runSuspendedTransaction
 import com.studystream.app.domain.model.Account
 import com.studystream.app.domain.model.Id
+import com.studystream.app.domain.model.Profile
 import com.studystream.app.domain.model.Ticket
 import com.studystream.app.domain.service.TicketService
+import com.studystream.app.domain.utils.require
+import com.studystream.app.utils.now
+import kotlinx.datetime.LocalDateTime
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.andIfNotNull
@@ -19,12 +23,20 @@ class TicketServiceImpl(
     private val ticketTypeDao: TicketDao.TypeDao,
 ) : TicketService {
     override suspend fun createTicket(
-        ownerId: Id,
-        profileId: Id,
-        typeId: Id,
+        owner: Account,
+        profile: Profile,
+        type: Ticket.Type,
         isActivated: Boolean
     ): Result<Ticket> = runCatchingTransaction {
-        TODO("Not yet implemented")
+        ticketDao.new {
+            this.owner = owner
+            this.profile = profile
+            this.type = type
+            this.activatedAt = when (isActivated) {
+                true -> LocalDateTime.now()
+                false -> null
+            }
+        }
     }
 
     override suspend fun createTicketType(
@@ -43,12 +55,12 @@ class TicketServiceImpl(
         }
     }
 
-    override suspend fun getTicket(ticketId: Id): Ticket? = runSuspendedTransaction {
-        ticketDao.findById(ticketId)
+    override suspend fun getTicket(ticketId: Id): Result<Ticket> = runCatchingTransaction {
+        ticketDao.findById(ticketId).require()
     }
 
-    override suspend fun getTicketType(typeId: Id): Ticket.Type? = runSuspendedTransaction {
-        ticketTypeDao.findById(typeId)
+    override suspend fun getTicketType(typeId: Id): Result<Ticket.Type> = runCatchingTransaction {
+        ticketTypeDao.findById(typeId).require()
     }
 
     override suspend fun getTickets(filters: TicketService.Filters): List<Ticket> =

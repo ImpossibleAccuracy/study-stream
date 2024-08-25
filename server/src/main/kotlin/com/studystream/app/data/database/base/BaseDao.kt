@@ -1,8 +1,7 @@
 package com.studystream.app.data.database.base
 
-import kotlinx.datetime.Clock.System.now
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
+import com.studystream.app.utils.now
+import kotlinx.datetime.LocalDateTime
 import org.jetbrains.exposed.dao.EntityChangeType
 import org.jetbrains.exposed.dao.EntityHook
 import org.jetbrains.exposed.dao.IntEntityClass
@@ -17,7 +16,7 @@ abstract class BaseDao<T : BaseModel>(
         EntityHook.subscribe { action ->
             if (action.changeType == EntityChangeType.Updated) {
                 try {
-                    action.toEntity(this)?.updatedAt = now().toLocalDateTime(TimeZone.UTC)
+                    action.toEntity(this)?.updatedAt = LocalDateTime.now()
                 } catch (_: Exception) {
                 }
             }

@@ -1,5 +1,6 @@
 package com.studystream.app.server.feature.profile.routes
 
+import com.studystream.app.data.database.utils.runSuspendedTransaction
 import com.studystream.app.domain.exception.InvalidInputException
 import com.studystream.app.domain.model.Account
 import com.studystream.app.domain.service.AccountService
@@ -37,9 +38,9 @@ suspend fun createProfile(
     account: Account,
     profileService: ProfileService,
     accountService: AccountService,
-): ProfileDto {
+): ProfileDto = runSuspendedTransaction {
     // TODO: add admin check
-    val profileAccount = body.accountId?.let { accountService.findUser(it) } ?: account
+    val profileAccount = body.accountId?.let { accountService.getAccount(it).getOrThrow() } ?: account
 
     if (profileService.existsProfile(
             accountId = profileAccount.idValue,
@@ -51,7 +52,7 @@ suspend fun createProfile(
         throw InvalidInputException("Profile with such name already exists")
     }
 
-    return profileService
+    profileService
         .createProfile(
             owner = profileAccount,
             name = body.name,

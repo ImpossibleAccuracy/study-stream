@@ -1,7 +1,6 @@
 package com.studystream.app.server.feature.ticket.routes.type
 
 import com.studystream.app.data.database.utils.runSuspendedTransaction
-import com.studystream.app.domain.exception.ResourceNotFoundException
 import com.studystream.app.domain.service.TicketService
 import com.studystream.app.server.feature.ticket.Tickets
 import com.studystream.app.server.mapper.toDto
@@ -34,6 +33,6 @@ suspend fun getTicketTypeDetails(
         .getTicketType(
             typeId = route.id,
         )
-        ?.toDto()
-        ?: throw ResourceNotFoundException("Ticket type not found")
+        .getOrThrow()
+        .toDto()
 }

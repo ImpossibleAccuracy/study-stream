@@ -1,7 +1,6 @@
 package com.studystream.app.server.feature.profile.routes.avatar
 
 import com.studystream.app.data.database.utils.runSuspendedTransaction
-import com.studystream.app.domain.exception.ResourceNotFoundException
 import com.studystream.app.domain.service.FileStorageService
 import com.studystream.app.domain.service.ProfileService
 import com.studystream.app.server.feature.profile.Profiles
@@ -37,8 +36,7 @@ suspend fun getProfileAvatar(
     profileService: ProfileService,
     fileStorageService: FileStorageService,
 ): File? = runSuspendedTransaction {
-    val profile = profileService.getProfile(route.parent.id)
-        ?: throw ResourceNotFoundException("Profile not found")
+    val profile = profileService.getProfile(route.parent.id).getOrThrow()
 
     profile.avatar?.let { avatar ->
         fileStorageService

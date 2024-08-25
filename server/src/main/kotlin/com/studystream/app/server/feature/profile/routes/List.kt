@@ -1,5 +1,6 @@
 package com.studystream.app.server.feature.profile.routes
 
+import com.studystream.app.data.database.utils.runSuspendedTransaction
 import com.studystream.app.domain.service.ProfileService
 import com.studystream.app.server.feature.profile.Profiles
 import com.studystream.app.server.mapper.toDto
@@ -28,7 +29,7 @@ internal fun Routing.installGetProfilesListRoute() {
 suspend fun getProfilesList(
     route: Profiles.List,
     profileService: ProfileService,
-): List<ProfileDto> {
+): List<ProfileDto> = runSuspendedTransaction {
     // TODO: add permissions check
     // If account is admin -> can get all profiles
     // Else ownerId is replaced by account.id
@@ -38,7 +39,7 @@ suspend fun getProfilesList(
         else -> profileService.getProfilesByOwner(route.ownerId)
     }
 
-    return items.map {
+    items.map {
         it.toDto()
     }
 }
