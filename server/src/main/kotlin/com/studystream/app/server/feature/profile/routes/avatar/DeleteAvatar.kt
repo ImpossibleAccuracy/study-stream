@@ -28,12 +28,10 @@ suspend fun deleteProfileAvatar(
     route: Profiles.ProfileId.Avatar,
     profileService: ProfileService,
 ) = endpoint {
-    route.verify(profileService)
-
     // TODO: add permissions check
     profileService
         .updateAvatar(
-            profileId = route.parent.id,
+            profile = profileService.getProfile(route.parent.id).getOrThrow(),
             avatar = null,
         )
         .getOrThrow()

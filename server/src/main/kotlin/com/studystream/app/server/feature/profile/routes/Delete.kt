@@ -28,12 +28,10 @@ suspend fun deleteProfile(
     route: Profiles.ProfileId,
     profileService: ProfileService,
 ) = endpoint {
-    route.verify(profileService)
-
     // TODO: add permissions check
     profileService
         .deleteProfile(
-            profileId = route.id,
+            profile = profileService.getProfile(route.id).getOrThrow(),
         )
         .getOrThrow()
 }

@@ -43,7 +43,7 @@ suspend fun updateProfileAvatar(
     profileService: ProfileService,
     fileStorageService: FileStorageService,
 ) = endpoint {
-    route.verify(profileService)
+    val profile = profileService.getProfile(route.parent.id).getOrThrow()
 
     val avatarDocument = fileStorageService
         .store(avatar, StorageCatalog.Temp)
@@ -52,7 +52,7 @@ suspend fun updateProfileAvatar(
     // TODO: add permissions check
     profileService
         .updateAvatar(
-            profileId = route.parent.id,
+            profile = profile,
             avatar = avatarDocument,
         )
         .onSuccess {

@@ -99,14 +99,34 @@ class TicketServiceImpl(
         ticketTypeDao.exists(TicketTypeTable.id eq typeId)
     }
 
+    override suspend fun updateTicket(
+        ticket: Ticket,
+        profile: Profile,
+        type: Ticket.Type,
+        isActivated: Boolean
+    ): Result<Ticket> = runCatchingTransaction {
+        ticketDao.findByIdAndUpdate(ticket.idValue) {
+            it.profile = profile
+            it.type = type
+
+            if (isActivated) {
+                if (it.activatedAt == null) {
+                    it.activatedAt = LocalDateTime.now()
+                }
+            } else {
+                it.activatedAt = null
+            }
+        }!!
+    }
+
     override suspend fun updateTicketType(
-        typeId: Id,
+        type: Ticket.Type,
         title: String,
         description: String,
         totalEvents: Int?,
         durationDays: Int?
     ): Result<Ticket.Type> = runCatchingTransaction {
-        ticketTypeDao.findByIdAndUpdate(typeId) {
+        ticketTypeDao.findByIdAndUpdate(type.idValue) {
             it.title = title
             it.description = description
             it.totalEvents = totalEvents
@@ -114,7 +134,11 @@ class TicketServiceImpl(
         }!!
     }
 
-    override suspend fun deleteTicketType(typeId: Id): Result<Unit> = runCatchingTransaction {
-        ticketTypeDao.findById(typeId)!!.delete()
+    override suspend fun deleteTicket(ticket: Ticket): Result<Unit> = runCatchingTransaction {
+        ticket.delete()
+    }
+
+    override suspend fun deleteTicketType(type: Ticket.Type): Result<Unit> = runCatchingTransaction {
+        type.delete()
     }
 }

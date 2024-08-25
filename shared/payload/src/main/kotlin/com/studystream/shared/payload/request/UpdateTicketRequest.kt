@@ -5,13 +5,11 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class CreateTicketRequest(
-    @SerialName("owner_id")
-    val ownerId: RemoteId? = null,
+data class UpdateTicketRequest(
     @SerialName("profile_id")
     val profileId: RemoteId,
     @SerialName("type_id")
     val typeId: RemoteId,
     @SerialName("is_activated")
-    val isActivated: Boolean = false,
+    val isActivated: Boolean? = null,
 )

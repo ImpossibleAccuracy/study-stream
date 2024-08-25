@@ -33,12 +33,10 @@ suspend fun updateTicketType(
     body: UpsertTicketTypeRequest,
     ticketService: TicketService,
 ): TicketTypeDto = endpoint {
-    route.verify(ticketService)
-
     // TODO: check permissions to update ticket type
     ticketService
         .updateTicketType(
-            typeId = route.id,
+            type = ticketService.getTicketType(route.id).getOrThrow(),
             title = body.title,
             description = body.description,
             totalEvents = body.totalEvents,

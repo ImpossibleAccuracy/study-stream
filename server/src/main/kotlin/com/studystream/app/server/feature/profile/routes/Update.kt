@@ -49,7 +49,7 @@ suspend fun updateProfile(
 
     profileService
         .updateProfile(
-            profileId = route.id,
+            profile = profile,
             name = body.name,
             surname = body.surname,
             patronymic = body.patronymic,

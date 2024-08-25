@@ -33,15 +33,24 @@ interface TicketService {
 
     suspend fun existsTicketType(typeId: Id): Boolean
 
+    suspend fun updateTicket(
+        ticket: Ticket,
+        profile: Profile,
+        type: Ticket.Type,
+        isActivated: Boolean
+    ): Result<Ticket>
+
     suspend fun updateTicketType(
-        typeId: Id,
+        type: Ticket.Type,
         title: String,
         description: String,
         totalEvents: Int?,
         durationDays: Int?,
     ): Result<Ticket.Type>
 
-    suspend fun deleteTicketType(typeId: Id): Result<Unit>
+    suspend fun deleteTicket(ticket: Ticket): Result<Unit>
+
+    suspend fun deleteTicketType(type: Ticket.Type): Result<Unit>
 
     data class Filters(
         val ownerId: Id? = null,

@@ -43,7 +43,7 @@ suspend fun createTicket(
 ): TicketDto = endpoint {
     // TODO: check permissions to create ticket
 
-    val creator = body.creatorId?.let { accountService.getAccount(it).getOrThrow() } ?: account
+    val creator = body.ownerId?.let { accountService.getAccount(it).getOrThrow() } ?: account
     val profile = profileService.getProfile(body.profileId).getOrThrow()
     val type = ticketService.getTicketType(body.typeId).getOrThrow()
 
