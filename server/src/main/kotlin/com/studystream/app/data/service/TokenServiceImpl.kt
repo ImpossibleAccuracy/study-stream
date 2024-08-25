@@ -2,12 +2,13 @@ package com.studystream.app.data.service
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import com.studystream.app.data.utils.ioCall
+import com.studystream.app.data.utils.ioCatchingCall
 import com.studystream.app.domain.exception.OperationRejectedException
 import com.studystream.app.domain.model.Account
 import com.studystream.app.domain.properties.TokenProperties
 import com.studystream.app.domain.service.AccountService
 import com.studystream.app.domain.service.TokenService
+import kotlinx.coroutines.Dispatchers
 import java.time.Instant
 import java.util.*
 
@@ -18,7 +19,7 @@ class TokenServiceImpl(
     override suspend fun refreshToken(
         token: String,
         refreshThresholdMillis: Long,
-    ): Result<TokenService.RefreshedToken> = runCatching {
+    ): Result<TokenService.RefreshedToken> = ioCatchingCall(Dispatchers.Default) {
         val decoded = JWT.decode(token)
 
         // TODO: add tests to business logic
@@ -44,7 +45,7 @@ class TokenServiceImpl(
         )
     }
 
-    override suspend fun generate(account: Account): Result<String> = ioCall {
+    override suspend fun generate(account: Account): Result<String> = ioCatchingCall {
         JWT.create()
             .withAudience(tokenProperties.audience)
             .withIssuer(tokenProperties.issuer)

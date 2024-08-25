@@ -1,10 +1,19 @@
 package com.studystream.app.data.utils
 
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-suspend fun <T> ioCall(block: suspend () -> T): Result<T> = runCatching {
+suspend fun <T> ioCall(block: suspend () -> T): T =
     withContext(Dispatchers.IO) {
+        block()
+    }
+
+suspend fun <T> ioCatchingCall(
+    dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    block: suspend () -> T
+): Result<T> = runCatching {
+    withContext(dispatcher) {
         block()
     }
 }

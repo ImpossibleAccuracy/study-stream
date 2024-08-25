@@ -8,6 +8,7 @@ import com.studystream.app.domain.service.AccountService
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 fun Application.configureSecurity(
     tokenProperties: TokenProperties,
@@ -32,8 +33,9 @@ fun Application.configureSecurity(
                     ?.toInt()
                     ?: return@validate null
 
-                val user = accountService.getAccount(id).getOrNull()
-                    ?: return@validate null
+                val user = newSuspendedTransaction {
+                    accountService.getAccount(id).getOrNull()
+                } ?: return@validate null
 
                 AccountPrincipal(user)
             }

@@ -4,8 +4,8 @@ import com.studystream.app.data.database.dao.TicketDao
 import com.studystream.app.data.database.tables.TicketTable
 import com.studystream.app.data.database.tables.TicketTypeTable
 import com.studystream.app.data.database.utils.exists
-import com.studystream.app.data.database.utils.runCatchingTransaction
-import com.studystream.app.data.database.utils.runSuspendedTransaction
+import com.studystream.app.data.utils.ioCall
+import com.studystream.app.data.utils.ioCatchingCall
 import com.studystream.app.domain.model.Account
 import com.studystream.app.domain.model.Id
 import com.studystream.app.domain.model.Profile
@@ -27,7 +27,7 @@ class TicketServiceImpl(
         profile: Profile,
         type: Ticket.Type,
         isActivated: Boolean
-    ): Result<Ticket> = runCatchingTransaction {
+    ): Result<Ticket> = ioCatchingCall {
         ticketDao.new {
             this.owner = owner
             this.profile = profile
@@ -45,7 +45,7 @@ class TicketServiceImpl(
         totalEvents: Int?,
         durationDays: Int?,
         creator: Account
-    ): Result<Ticket.Type> = runCatchingTransaction {
+    ): Result<Ticket.Type> = ioCatchingCall {
         ticketTypeDao.new {
             this.title = title
             this.description = description
@@ -55,16 +55,16 @@ class TicketServiceImpl(
         }
     }
 
-    override suspend fun getTicket(ticketId: Id): Result<Ticket> = runCatchingTransaction {
+    override suspend fun getTicket(ticketId: Id): Result<Ticket> = ioCatchingCall {
         ticketDao.findById(ticketId).require()
     }
 
-    override suspend fun getTicketType(typeId: Id): Result<Ticket.Type> = runCatchingTransaction {
+    override suspend fun getTicketType(typeId: Id): Result<Ticket.Type> = ioCatchingCall {
         ticketTypeDao.findById(typeId).require()
     }
 
     override suspend fun getTickets(filters: TicketService.Filters): List<Ticket> =
-        runSuspendedTransaction {
+        ioCall {
             ticketDao
                 .find {
                     Op.TRUE
@@ -87,15 +87,15 @@ class TicketServiceImpl(
                 .toList()
         }
 
-    override suspend fun getTicketsTypes(): List<Ticket.Type> = runSuspendedTransaction {
+    override suspend fun getTicketsTypes(): List<Ticket.Type> = ioCall {
         ticketTypeDao.all().toList()
     }
 
-    override suspend fun existsTicket(ticketId: Id): Boolean = runSuspendedTransaction {
+    override suspend fun existsTicket(ticketId: Id): Boolean = ioCall {
         ticketDao.exists(TicketTable.id eq ticketId)
     }
 
-    override suspend fun existsTicketType(typeId: Id): Boolean = runSuspendedTransaction {
+    override suspend fun existsTicketType(typeId: Id): Boolean = ioCall {
         ticketTypeDao.exists(TicketTypeTable.id eq typeId)
     }
 
@@ -104,7 +104,7 @@ class TicketServiceImpl(
         profile: Profile,
         type: Ticket.Type,
         isActivated: Boolean
-    ): Result<Ticket> = runCatchingTransaction {
+    ): Result<Ticket> = ioCatchingCall {
         ticketDao.findByIdAndUpdate(ticket.idValue) {
             it.profile = profile
             it.type = type
@@ -125,7 +125,7 @@ class TicketServiceImpl(
         description: String,
         totalEvents: Int?,
         durationDays: Int?
-    ): Result<Ticket.Type> = runCatchingTransaction {
+    ): Result<Ticket.Type> = ioCatchingCall {
         ticketTypeDao.findByIdAndUpdate(type.idValue) {
             it.title = title
             it.description = description
@@ -134,11 +134,11 @@ class TicketServiceImpl(
         }!!
     }
 
-    override suspend fun deleteTicket(ticket: Ticket): Result<Unit> = runCatchingTransaction {
+    override suspend fun deleteTicket(ticket: Ticket): Result<Unit> = ioCatchingCall {
         ticket.delete()
     }
 
-    override suspend fun deleteTicketType(type: Ticket.Type): Result<Unit> = runCatchingTransaction {
+    override suspend fun deleteTicketType(type: Ticket.Type): Result<Unit> = ioCatchingCall {
         type.delete()
     }
 }
