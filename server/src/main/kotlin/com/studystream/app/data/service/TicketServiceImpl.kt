@@ -18,6 +18,15 @@ class TicketServiceImpl(
     private val ticketDao: TicketDao,
     private val ticketTypeDao: TicketDao.TypeDao,
 ) : TicketService {
+    override suspend fun createTicket(
+        ownerId: Id,
+        profileId: Id,
+        typeId: Id,
+        isActivated: Boolean
+    ): Result<Ticket> = runCatchingTransaction {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun createTicketType(
         title: String,
         description: String,
@@ -34,8 +43,12 @@ class TicketServiceImpl(
         }
     }
 
-    override suspend fun getTicketType(id: Id): Ticket.Type? = runSuspendedTransaction {
-        ticketTypeDao.findById(id)
+    override suspend fun getTicket(ticketId: Id): Ticket? = runSuspendedTransaction {
+        ticketDao.findById(ticketId)
+    }
+
+    override suspend fun getTicketType(typeId: Id): Ticket.Type? = runSuspendedTransaction {
+        ticketTypeDao.findById(typeId)
     }
 
     override suspend fun getTickets(filters: TicketService.Filters): List<Ticket> =
@@ -66,18 +79,22 @@ class TicketServiceImpl(
         ticketTypeDao.all().toList()
     }
 
+    override suspend fun existsTicket(ticketId: Id): Boolean = runSuspendedTransaction {
+        ticketDao.exists(TicketTable.id eq ticketId)
+    }
+
     override suspend fun existsTicketType(typeId: Id): Boolean = runSuspendedTransaction {
         ticketTypeDao.exists(TicketTypeTable.id eq typeId)
     }
 
     override suspend fun updateTicketType(
-        id: Id,
+        typeId: Id,
         title: String,
         description: String,
         totalEvents: Int?,
         durationDays: Int?
     ): Result<Ticket.Type> = runCatchingTransaction {
-        ticketTypeDao.findByIdAndUpdate(id) {
+        ticketTypeDao.findByIdAndUpdate(typeId) {
             it.title = title
             it.description = description
             it.totalEvents = totalEvents
@@ -85,7 +102,7 @@ class TicketServiceImpl(
         }!!
     }
 
-    override suspend fun deleteTicketType(id: Id): Result<Unit> = runCatchingTransaction {
-        ticketTypeDao.findById(id)!!.delete()
+    override suspend fun deleteTicketType(typeId: Id): Result<Unit> = runCatchingTransaction {
+        ticketTypeDao.findById(typeId)!!.delete()
     }
 }

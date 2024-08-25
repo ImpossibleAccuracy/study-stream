@@ -38,7 +38,7 @@ suspend fun updateTicketType(
     // TODO: check permissions to update ticket type
     ticketService
         .updateTicketType(
-            id = route.id,
+            typeId = route.id,
             title = body.title,
             description = body.description,
             totalEvents = body.totalEvents,

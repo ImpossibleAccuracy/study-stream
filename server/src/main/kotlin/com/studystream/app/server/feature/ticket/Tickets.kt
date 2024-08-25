@@ -24,6 +24,20 @@ class Tickets(
         @Suppress("unused") val parent: Tickets = Tickets()
     )
 
+    @Serializable
+    @Resource("/{id}")
+    class TicketId(
+        @SerialName("id")
+        val id: Id,
+        @Suppress("unused") val parent: Types = Types()
+    ) {
+        suspend fun verify(ticketService: TicketService) {
+            if (!ticketService.existsTicket(id)) {
+                throw ResourceNotFoundException("Ticket not found")
+            }
+        }
+    }
+
     @Resource("/type")
     class Types(
         @Suppress("unused") val parent: Tickets = Tickets()
@@ -42,7 +56,7 @@ class Tickets(
         ) {
             suspend fun verify(ticketService: TicketService) {
                 if (!ticketService.existsTicketType(id)) {
-                    throw ResourceNotFoundException("Ticket not found")
+                    throw ResourceNotFoundException("Ticket type not found")
                 }
             }
         }

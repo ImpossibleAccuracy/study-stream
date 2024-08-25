@@ -1,4 +1,4 @@
-package com.studystream.app.server.feature.ticket.routes.type
+package com.studystream.app.server.feature.ticket.routes
 
 import com.studystream.app.data.database.utils.runSuspendedTransaction
 import com.studystream.app.domain.exception.ResourceNotFoundException
@@ -6,17 +6,17 @@ import com.studystream.app.domain.service.TicketService
 import com.studystream.app.server.feature.ticket.Tickets
 import com.studystream.app.server.mapper.toDto
 import com.studystream.app.server.utils.typeSafeGet
-import com.studystream.shared.payload.dto.TicketTypeDto
+import com.studystream.shared.payload.dto.TicketDto
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.get
 
-internal fun Route.installGetTicketTypeDetailsRoute() {
+internal fun Route.installGetTicketDetailsRoute() {
     authenticate {
-        typeSafeGet<Tickets.Types.TypeId> { route ->
-            val result = getTicketTypeDetails(
+        typeSafeGet<Tickets.TicketId> { route ->
+            val result = getTicketDetails(
                 route = route,
                 ticketService = call.get(),
             )
@@ -26,14 +26,15 @@ internal fun Route.installGetTicketTypeDetailsRoute() {
     }
 }
 
-suspend fun getTicketTypeDetails(
-    route: Tickets.Types.TypeId,
+suspend fun getTicketDetails(
+    route: Tickets.TicketId,
     ticketService: TicketService,
-): TicketTypeDto = runSuspendedTransaction {
+): TicketDto = runSuspendedTransaction {
+    // TODO: add permissions check
     ticketService
-        .getTicketType(
-            typeId = route.id,
+        .getTicket(
+            ticketId = route.id,
         )
         ?.toDto()
-        ?: throw ResourceNotFoundException("Ticket type not found")
+        ?: throw ResourceNotFoundException("Ticket not found")
 }

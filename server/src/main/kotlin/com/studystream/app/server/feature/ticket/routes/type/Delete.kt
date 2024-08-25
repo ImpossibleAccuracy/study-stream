@@ -37,6 +37,6 @@ suspend fun deleteTicketType(
         }
 
         // TODO: check permissions to delete ticket type
-        ticketService.deleteTicketType(id = route.id).getOrThrow()
+        ticketService.deleteTicketType(typeId = route.id).getOrThrow()
     }
 }
