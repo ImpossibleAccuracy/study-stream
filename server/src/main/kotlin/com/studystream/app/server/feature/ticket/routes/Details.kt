@@ -1,9 +1,9 @@
 package com.studystream.app.server.feature.ticket.routes
 
-import com.studystream.app.data.database.utils.runSuspendedTransaction
 import com.studystream.app.domain.service.TicketService
 import com.studystream.app.server.feature.ticket.Tickets
 import com.studystream.app.server.mapper.toDto
+import com.studystream.app.server.utils.endpoint
 import com.studystream.app.server.utils.typeSafeGet
 import com.studystream.shared.payload.dto.TicketDto
 import io.ktor.server.application.*
@@ -28,7 +28,7 @@ internal fun Route.installGetTicketDetailsRoute() {
 suspend fun getTicketDetails(
     route: Tickets.TicketId,
     ticketService: TicketService,
-): TicketDto = runSuspendedTransaction {
+): TicketDto = endpoint {
     // TODO: add permissions check
     ticketService
         .getTicket(

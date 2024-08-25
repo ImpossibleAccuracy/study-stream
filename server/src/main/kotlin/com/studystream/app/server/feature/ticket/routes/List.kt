@@ -1,12 +1,12 @@
 package com.studystream.app.server.feature.ticket.routes
 
-import com.studystream.app.data.database.utils.runSuspendedTransaction
 import com.studystream.app.domain.model.Account
 import com.studystream.app.domain.model.Id
 import com.studystream.app.domain.service.TicketService
 import com.studystream.app.server.feature.ticket.Tickets
 import com.studystream.app.server.mapper.toDto
 import com.studystream.app.server.security.requireAccount
+import com.studystream.app.server.utils.endpoint
 import com.studystream.app.server.utils.typeSafeGet
 import com.studystream.shared.payload.dto.TicketDto
 import io.ktor.server.application.*
@@ -38,7 +38,7 @@ suspend fun getTicketsList(
     typeId: Id?,
     account: Account,
     ticketService: TicketService,
-): List<TicketDto> = runSuspendedTransaction {
+): List<TicketDto> = endpoint {
     // TODO: add permissions check
     // If account is admin -> can get all tickets
     // Else ownerId is replaced by account.id

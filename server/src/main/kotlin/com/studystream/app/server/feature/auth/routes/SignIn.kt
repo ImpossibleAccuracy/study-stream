@@ -3,6 +3,7 @@ package com.studystream.app.server.feature.auth.routes
 import com.studystream.app.domain.service.AuthService
 import com.studystream.app.domain.service.TokenService
 import com.studystream.app.server.feature.auth.AuthRoute
+import com.studystream.app.server.utils.endpoint
 import com.studystream.app.server.utils.typeSafePost
 import com.studystream.shared.payload.request.SignInRequest
 import com.studystream.shared.payload.response.AuthResponse
@@ -28,12 +29,12 @@ suspend fun signInRoute(
     body: SignInRequest,
     authService: AuthService,
     tokenService: TokenService,
-): AuthResponse {
+): AuthResponse = endpoint {
     val user = authService
         .signIn(body.username, body.password)
         .getOrThrow()
 
-    return AuthResponse(
+    AuthResponse(
         id = user.idValue,
         token = tokenService.generate(user).getOrThrow(),
     )

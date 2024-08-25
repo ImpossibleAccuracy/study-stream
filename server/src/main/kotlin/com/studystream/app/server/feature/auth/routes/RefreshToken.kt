@@ -5,6 +5,7 @@ import com.studystream.app.domain.exception.OperationRejectedException
 import com.studystream.app.domain.properties.feature.AuthProperties
 import com.studystream.app.domain.service.TokenService
 import com.studystream.app.server.feature.auth.AuthRoute
+import com.studystream.app.server.utils.endpoint
 import com.studystream.app.server.utils.typeSafePost
 import com.studystream.shared.payload.response.AuthResponse
 import io.ktor.server.application.*
@@ -37,12 +38,14 @@ suspend fun refreshTokenRoute(
     token: String,
     properties: AuthProperties,
     tokenService: TokenService,
-): AuthResponse = tokenService
-    .refreshToken(token, properties.tokenRefreshThresholdMillis)
-    .getOrThrow()
-    .let {
-        AuthResponse(
-            id = it.account.idValue,
-            token = it.token,
-        )
-    }
+): AuthResponse = endpoint {
+    tokenService
+        .refreshToken(token, properties.tokenRefreshThresholdMillis)
+        .getOrThrow()
+        .let {
+            AuthResponse(
+                id = it.account.idValue,
+                token = it.token,
+            )
+        }
+}

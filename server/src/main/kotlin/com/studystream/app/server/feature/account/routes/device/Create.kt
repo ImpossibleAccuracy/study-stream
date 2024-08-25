@@ -1,12 +1,12 @@
 package com.studystream.app.server.feature.account.routes.device
 
-import com.studystream.app.data.database.utils.runSuspendedTransaction
 import com.studystream.app.domain.model.Account
 import com.studystream.app.domain.service.DeviceService
 import com.studystream.app.server.feature.account.Accounts
-import com.studystream.app.server.mapper.toDto
 import com.studystream.app.server.mapper.fromDto
+import com.studystream.app.server.mapper.toDto
 import com.studystream.app.server.security.requireAccount
+import com.studystream.app.server.utils.endpoint
 import com.studystream.app.server.utils.typeSafePost
 import com.studystream.shared.payload.dto.DeviceDto
 import com.studystream.shared.payload.request.SaveDeviceRequest
@@ -35,7 +35,7 @@ suspend fun createProfile(
     body: SaveDeviceRequest,
     account: Account,
     deviceService: DeviceService,
-): DeviceDto = runSuspendedTransaction {
+): DeviceDto = endpoint {
     deviceService
         .saveDevice(
             owner = account,

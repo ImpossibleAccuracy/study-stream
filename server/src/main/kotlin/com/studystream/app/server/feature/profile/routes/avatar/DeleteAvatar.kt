@@ -2,6 +2,7 @@ package com.studystream.app.server.feature.profile.routes.avatar
 
 import com.studystream.app.domain.service.ProfileService
 import com.studystream.app.server.feature.profile.Profiles
+import com.studystream.app.server.utils.endpoint
 import com.studystream.app.server.utils.typeSafeDelete
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -26,11 +27,11 @@ internal fun Routing.installDeleteProfileAvatarRoute() {
 suspend fun deleteProfileAvatar(
     route: Profiles.ProfileId.Avatar,
     profileService: ProfileService,
-) {
+) = endpoint {
     route.verify(profileService)
 
     // TODO: add permissions check
-    return profileService
+    profileService
         .updateAvatar(
             profileId = route.parent.id,
             avatar = null,

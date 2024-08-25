@@ -4,6 +4,7 @@ import com.studystream.app.domain.model.Account
 import com.studystream.app.domain.service.AccountService
 import com.studystream.app.server.feature.auth.AuthRoute
 import com.studystream.app.server.security.requireAccount
+import com.studystream.app.server.utils.endpoint
 import com.studystream.app.server.utils.typeSafeDelete
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -28,6 +29,8 @@ internal fun Routing.installDeleteMeRoute() {
 suspend fun deleteMeRoute(
     account: Account,
     accountService: AccountService,
-) = accountService
-    .deleteAccount(id = account.idValue)
-    .getOrThrow()
+) = endpoint {
+    accountService
+        .deleteAccount(id = account.idValue)
+        .getOrThrow()
+}

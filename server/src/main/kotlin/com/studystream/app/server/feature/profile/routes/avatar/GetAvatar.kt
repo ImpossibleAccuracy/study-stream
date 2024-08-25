@@ -1,9 +1,9 @@
 package com.studystream.app.server.feature.profile.routes.avatar
 
-import com.studystream.app.data.database.utils.runSuspendedTransaction
 import com.studystream.app.domain.service.FileStorageService
 import com.studystream.app.domain.service.ProfileService
 import com.studystream.app.server.feature.profile.Profiles
+import com.studystream.app.server.utils.endpoint
 import com.studystream.app.server.utils.typeSafeGet
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -35,7 +35,7 @@ suspend fun getProfileAvatar(
     route: Profiles.ProfileId.Avatar,
     profileService: ProfileService,
     fileStorageService: FileStorageService,
-): File? = runSuspendedTransaction {
+): File? = endpoint {
     val profile = profileService.getProfile(route.parent.id).getOrThrow()
 
     profile.avatar?.let { avatar ->

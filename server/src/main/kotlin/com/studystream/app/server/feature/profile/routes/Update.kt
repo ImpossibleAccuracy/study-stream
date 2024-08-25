@@ -1,10 +1,10 @@
 package com.studystream.app.server.feature.profile.routes
 
-import com.studystream.app.data.database.utils.runSuspendedTransaction
 import com.studystream.app.domain.exception.InvalidInputException
 import com.studystream.app.domain.service.ProfileService
 import com.studystream.app.server.feature.profile.Profiles
 import com.studystream.app.server.mapper.toDto
+import com.studystream.app.server.utils.endpoint
 import com.studystream.app.server.utils.typeSafePut
 import com.studystream.shared.payload.dto.ProfileDto
 import com.studystream.shared.payload.request.UpdateProfileRequest
@@ -33,7 +33,7 @@ suspend fun updateProfile(
     route: Profiles.ProfileId,
     body: UpdateProfileRequest,
     profileService: ProfileService,
-): ProfileDto = runSuspendedTransaction {
+): ProfileDto = endpoint {
     val profile = profileService.getProfile(route.id).getOrThrow()
 
     if (profileService.existsProfile(

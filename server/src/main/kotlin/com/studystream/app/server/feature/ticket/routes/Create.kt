@@ -1,6 +1,5 @@
 package com.studystream.app.server.feature.ticket.routes
 
-import com.studystream.app.data.database.utils.runSuspendedTransaction
 import com.studystream.app.domain.model.Account
 import com.studystream.app.domain.service.AccountService
 import com.studystream.app.domain.service.ProfileService
@@ -8,6 +7,7 @@ import com.studystream.app.domain.service.TicketService
 import com.studystream.app.server.feature.ticket.Tickets
 import com.studystream.app.server.mapper.toDto
 import com.studystream.app.server.security.requireAccount
+import com.studystream.app.server.utils.endpoint
 import com.studystream.app.server.utils.typeSafePost
 import com.studystream.shared.payload.dto.TicketDto
 import com.studystream.shared.payload.request.CreateTicketRequest
@@ -40,7 +40,7 @@ suspend fun createTicket(
     ticketService: TicketService,
     accountService: AccountService,
     profileService: ProfileService,
-): TicketDto = runSuspendedTransaction {
+): TicketDto = endpoint {
     // TODO: check permissions to create ticket
 
     val creator = body.creatorId?.let { accountService.getAccount(it).getOrThrow() } ?: account

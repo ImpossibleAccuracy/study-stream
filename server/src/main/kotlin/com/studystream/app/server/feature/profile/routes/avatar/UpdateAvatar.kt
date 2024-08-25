@@ -6,6 +6,7 @@ import com.studystream.app.domain.model.StorageCatalog
 import com.studystream.app.domain.service.FileStorageService
 import com.studystream.app.domain.service.ProfileService
 import com.studystream.app.server.feature.profile.Profiles
+import com.studystream.app.server.utils.endpoint
 import com.studystream.app.server.utils.receiveFile
 import com.studystream.app.server.utils.typeSafePut
 import io.ktor.http.*
@@ -41,7 +42,7 @@ suspend fun updateProfileAvatar(
     route: Profiles.ProfileId.Avatar,
     profileService: ProfileService,
     fileStorageService: FileStorageService,
-) {
+) = endpoint {
     route.verify(profileService)
 
     val avatarDocument = fileStorageService
@@ -49,7 +50,7 @@ suspend fun updateProfileAvatar(
         .getOrThrow()
 
     // TODO: add permissions check
-    return profileService
+    profileService
         .updateAvatar(
             profileId = route.parent.id,
             avatar = avatarDocument,

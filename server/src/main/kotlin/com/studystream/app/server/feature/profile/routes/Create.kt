@@ -1,6 +1,5 @@
 package com.studystream.app.server.feature.profile.routes
 
-import com.studystream.app.data.database.utils.runSuspendedTransaction
 import com.studystream.app.domain.exception.InvalidInputException
 import com.studystream.app.domain.model.Account
 import com.studystream.app.domain.service.AccountService
@@ -8,6 +7,7 @@ import com.studystream.app.domain.service.ProfileService
 import com.studystream.app.server.feature.profile.Profiles
 import com.studystream.app.server.mapper.toDto
 import com.studystream.app.server.security.requireAccount
+import com.studystream.app.server.utils.endpoint
 import com.studystream.app.server.utils.typeSafePost
 import com.studystream.shared.payload.dto.ProfileDto
 import com.studystream.shared.payload.request.CreateProfileRequest
@@ -38,7 +38,7 @@ suspend fun createProfile(
     account: Account,
     profileService: ProfileService,
     accountService: AccountService,
-): ProfileDto = runSuspendedTransaction {
+): ProfileDto = endpoint {
     // TODO: add admin check
     val profileAccount = body.accountId?.let { accountService.getAccount(it).getOrThrow() } ?: account
 

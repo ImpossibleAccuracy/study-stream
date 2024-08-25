@@ -1,9 +1,9 @@
 package com.studystream.app.server.feature.ticket.routes.type
 
-import com.studystream.app.data.database.utils.runSuspendedTransaction
 import com.studystream.app.domain.service.TicketService
 import com.studystream.app.server.feature.ticket.Tickets
 import com.studystream.app.server.mapper.toDto
+import com.studystream.app.server.utils.endpoint
 import com.studystream.app.server.utils.typeSafePut
 import com.studystream.shared.payload.dto.TicketTypeDto
 import com.studystream.shared.payload.request.UpsertTicketTypeRequest
@@ -32,7 +32,7 @@ suspend fun updateTicketType(
     route: Tickets.Types.TypeId,
     body: UpsertTicketTypeRequest,
     ticketService: TicketService,
-): TicketTypeDto = runSuspendedTransaction {
+): TicketTypeDto = endpoint {
     route.verify(ticketService)
 
     // TODO: check permissions to update ticket type
