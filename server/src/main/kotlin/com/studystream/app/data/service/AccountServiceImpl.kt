@@ -2,6 +2,7 @@ package com.studystream.app.data.service
 
 import com.studystream.app.data.database.dao.AccountDao
 import com.studystream.app.data.database.tables.AccountTable
+import com.studystream.app.data.utils.ioCall
 import com.studystream.app.data.utils.ioCatchingCall
 import com.studystream.app.domain.model.Account
 import com.studystream.app.domain.service.AccountService
@@ -29,6 +30,10 @@ class AccountServiceImpl(
             .find { AccountTable.username eq username }
             .firstOrNull()
             .require()
+    }
+
+    override suspend fun getAccounts(): List<Account> = ioCall {
+        accountDao.all().toList()
     }
 
     override suspend fun updateAccount(id: Int, username: String): Result<Account> = ioCatchingCall {

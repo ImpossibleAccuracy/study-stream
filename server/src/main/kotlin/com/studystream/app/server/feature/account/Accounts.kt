@@ -27,6 +27,12 @@ class Accounts(
     }
 
     @Serializable
+    @Resource("")
+    class List(
+        @Suppress("unused") val parent: Device = Device()
+    )
+
+    @Serializable
     @Resource("/{id}")
     class AccountId(
         @SerialName("id")
