@@ -16,7 +16,7 @@ interface ProfileService {
         avatar: Document?,
     ): Result<Profile>
 
-    suspend fun getProfile(id: Id): Profile?
+    suspend fun getProfile(id: Id): Result<Profile>
 
     suspend fun getProfiles(): List<Profile>
 
@@ -33,14 +33,14 @@ interface ProfileService {
     ): Boolean
 
     suspend fun updateProfile(
-        profileId: Id,
+        profile: Profile,
         name: String,
         surname: String,
         patronymic: String?,
         birthday: LocalDate,
     ): Result<Profile>
 
-    suspend fun updateAvatar(profileId: Id, avatar: Document?): Result<Unit>
+    suspend fun updateAvatar(profile: Profile, avatar: Document?): Result<Unit>
 
-    suspend fun deleteProfile(profileId: Id): Result<Unit>
+    suspend fun deleteProfile(profile: Profile): Result<Unit>
 }

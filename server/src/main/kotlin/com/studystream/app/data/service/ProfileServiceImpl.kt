@@ -3,13 +3,14 @@ package com.studystream.app.data.service
 import com.studystream.app.data.database.dao.ProfileDao
 import com.studystream.app.data.database.tables.ProfileTable
 import com.studystream.app.data.database.utils.exists
-import com.studystream.app.data.database.utils.runCatchingTransaction
-import com.studystream.app.data.database.utils.runSuspendedTransaction
+import com.studystream.app.data.utils.ioCall
+import com.studystream.app.data.utils.ioCatchingCall
 import com.studystream.app.domain.model.Account
 import com.studystream.app.domain.model.Document
 import com.studystream.app.domain.model.Id
 import com.studystream.app.domain.model.Profile
 import com.studystream.app.domain.service.ProfileService
+import com.studystream.app.domain.utils.require
 import kotlinx.datetime.LocalDate
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.neq
@@ -25,26 +26,26 @@ class ProfileServiceImpl(
         patronymic: String?,
         birthday: LocalDate,
         avatar: Document?
-    ): Result<Profile> = runCatchingTransaction {
+    ): Result<Profile> = ioCatchingCall {
         profileDao.new {
             this.name = name
             this.surname = surname
             this.patronymic = patronymic
             this.birthday = birthday
-            this.avatarId = avatar?.id
+            this.avatar = avatar
             this.account = owner
         }
     }
 
-    override suspend fun getProfile(id: Id): Profile? = runSuspendedTransaction {
-        profileDao.findById(id)
+    override suspend fun getProfile(id: Id): Result<Profile> = ioCatchingCall {
+        profileDao.findById(id).require()
     }
 
-    override suspend fun getProfiles(): List<Profile> = runSuspendedTransaction {
+    override suspend fun getProfiles(): List<Profile> = ioCall {
         profileDao.all().toList()
     }
 
-    override suspend fun getProfilesByOwner(ownerId: Id): List<Profile> = runSuspendedTransaction {
+    override suspend fun getProfilesByOwner(ownerId: Id): List<Profile> = ioCall {
         profileDao
             .find {
                 ProfileTable.accountId eq ownerId
@@ -52,7 +53,7 @@ class ProfileServiceImpl(
             .toList()
     }
 
-    override suspend fun existsProfile(id: Id): Boolean = runSuspendedTransaction {
+    override suspend fun existsProfile(id: Id): Boolean = ioCall {
         profileDao.exists(ProfileTable.id eq id)
     }
 
@@ -63,7 +64,7 @@ class ProfileServiceImpl(
         patronymic: String?,
         excludeProfileId: Id?,
     ): Boolean =
-        runSuspendedTransaction {
+        ioCall {
             profileDao.exists(
                 (ProfileTable.accountId eq accountId) and
                         (ProfileTable.name eq name) and
@@ -74,13 +75,13 @@ class ProfileServiceImpl(
         }
 
     override suspend fun updateProfile(
-        profileId: Id,
+        profile: Profile,
         name: String,
         surname: String,
         patronymic: String?,
         birthday: LocalDate
-    ): Result<Profile> = runCatchingTransaction {
-        profileDao.findByIdAndUpdate(profileId) {
+    ): Result<Profile> = ioCatchingCall {
+        profileDao.findByIdAndUpdate(profile.idValue) {
             it.name = name
             it.surname = surname
             it.patronymic = patronymic
@@ -88,13 +89,13 @@ class ProfileServiceImpl(
         }!!
     }
 
-    override suspend fun updateAvatar(profileId: Id, avatar: Document?): Result<Unit> = runCatchingTransaction {
-        profileDao.findByIdAndUpdate(profileId) {
-            it.avatarId = avatar?.id
+    override suspend fun updateAvatar(profile: Profile, avatar: Document?): Result<Unit> = ioCatchingCall {
+        profileDao.findByIdAndUpdate(profile.idValue) {
+            it.avatar = avatar
         }
     }
 
-    override suspend fun deleteProfile(profileId: Id): Result<Unit> = runCatchingTransaction {
-        profileDao.findById(profileId)!!.delete()
+    override suspend fun deleteProfile(profile: Profile): Result<Unit> = ioCatchingCall {
+        profileDao.findById(profile.idValue)!!.delete()
     }
 }

@@ -1,8 +1,8 @@
 package com.studystream.app.data.database.tables
 
-import org.jetbrains.exposed.dao.id.IntIdTable
+import com.studystream.app.data.database.base.BaseTable
 
-object DocumentTypeTable : IntIdTable("document_type") {
+object DocumentTypeTable : BaseTable("document_type") {
     val title = varchar("title", 255)
     val mimeType = varchar("mime_type", 255)
 }

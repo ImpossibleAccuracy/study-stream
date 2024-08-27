@@ -4,6 +4,6 @@ import com.studystream.app.domain.model.Account
 import com.studystream.shared.payload.dto.AccountDto
 
 fun Account.toDto() = AccountDto(
-    id = id.value,
+    id = idValue,
     username = username,
 )

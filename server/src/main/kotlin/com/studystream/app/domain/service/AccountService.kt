@@ -3,11 +3,16 @@ package com.studystream.app.domain.service
 import com.studystream.app.domain.model.Account
 
 interface AccountService {
-    suspend fun findUser(id: Int): Account?
+    suspend fun createAccount(
+        username: String,
+        password: String,
+    ): Result<Account>
 
-    suspend fun findUser(username: String): Account?
+    suspend fun getAccount(id: Int): Result<Account>
 
-    suspend fun updateUser(id: Int, username: String): Result<Account>
+    suspend fun getAccount(username: String): Result<Account>
 
-    suspend fun deleteUser(id: Int): Result<Unit>
+    suspend fun updateAccount(id: Int, username: String): Result<Account>
+
+    suspend fun deleteAccount(id: Int): Result<Unit>
 }

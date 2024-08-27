@@ -1,13 +1,10 @@
 package com.studystream.app.server.feature.profile.routes.avatar
 
-import com.studystream.app.data.database.utils.runSuspendedTransaction
-import com.studystream.app.domain.exception.ResourceNotFoundException
-import com.studystream.app.domain.model.Id
 import com.studystream.app.domain.service.FileStorageService
 import com.studystream.app.domain.service.ProfileService
 import com.studystream.app.server.feature.profile.Profiles
+import com.studystream.app.server.utils.endpoint
 import com.studystream.app.server.utils.typeSafeGet
-import com.studystream.app.server.utils.typeSafePut
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -20,7 +17,7 @@ internal fun Routing.installGetProfileAvatarRoute() {
     authenticate {
         typeSafeGet<Profiles.ProfileId.Avatar> { route ->
             val avatar = getProfileAvatar(
-                profileId = route.parent.id,
+                route = route,
                 profileService = call.get(),
                 fileStorageService = call.get(),
             )
@@ -35,12 +32,11 @@ internal fun Routing.installGetProfileAvatarRoute() {
 }
 
 suspend fun getProfileAvatar(
-    profileId: Id,
+    route: Profiles.ProfileId.Avatar,
     profileService: ProfileService,
     fileStorageService: FileStorageService,
-): File? = runSuspendedTransaction {
-    val profile = profileService.getProfile(profileId)
-        ?: throw ResourceNotFoundException("Profile not found")
+): File? = endpoint {
+    val profile = profileService.getProfile(route.parent.id).getOrThrow()
 
     profile.avatar?.let { avatar ->
         fileStorageService

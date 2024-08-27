@@ -4,8 +4,8 @@ import com.studystream.app.data.database.dao.DeviceDao
 import com.studystream.app.data.database.dao.DeviceTypeDao
 import com.studystream.app.data.database.tables.DeviceTable
 import com.studystream.app.data.database.tables.DeviceTypeTable
-import com.studystream.app.data.database.utils.runCatchingTransaction
-import com.studystream.app.data.database.utils.runSuspendedTransaction
+import com.studystream.app.data.utils.ioCall
+import com.studystream.app.data.utils.ioCatchingCall
 import com.studystream.app.domain.model.Account
 import com.studystream.app.domain.model.Device
 import com.studystream.app.domain.service.DeviceService
@@ -22,12 +22,12 @@ class DeviceServiceImpl(
         name: String?,
         token: String,
         type: Device.Type
-    ): Result<Device> = runCatchingTransaction {
+    ): Result<Device> = ioCatchingCall {
         updateDeviceIfSaved(token, name, type)
             ?: createDevice(owner, name, token, type)
     }
 
-    override suspend fun getDevices(filters: DeviceService.Filters): List<Device> = runSuspendedTransaction {
+    override suspend fun getDevices(filters: DeviceService.Filters): List<Device> = ioCall {
         val type = filters.deviceType?.let { type ->
             deviceTypeDao.find { DeviceTypeTable.title eq type }.firstOrNull()
         }

@@ -5,6 +5,7 @@ import com.studystream.app.domain.service.AccountService
 import com.studystream.app.server.feature.auth.AuthRoute
 import com.studystream.app.server.mapper.toDto
 import com.studystream.app.server.security.requireAccount
+import com.studystream.app.server.utils.endpoint
 import com.studystream.app.server.utils.typeSafePut
 import com.studystream.shared.payload.dto.AccountDto
 import com.studystream.shared.payload.request.UpdateAccountRequest
@@ -35,10 +36,12 @@ suspend fun updateMeRoute(
     account: Account,
     data: UpdateAccountRequest,
     accountService: AccountService,
-): AccountDto = accountService
-    .updateUser(
-        id = account.id.value,
-        username = data.username
-    )
-    .getOrThrow()
-    .toDto()
+): AccountDto = endpoint {
+    accountService
+        .updateAccount(
+            id = account.idValue,
+            username = data.username
+        )
+        .getOrThrow()
+        .toDto()
+}

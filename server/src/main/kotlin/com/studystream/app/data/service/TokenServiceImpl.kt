@@ -2,13 +2,13 @@ package com.studystream.app.data.service
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import com.studystream.app.data.utils.ioCall
+import com.studystream.app.data.utils.ioCatchingCall
 import com.studystream.app.domain.exception.OperationRejectedException
-import com.studystream.app.domain.exception.ResourceNotFoundException
 import com.studystream.app.domain.model.Account
 import com.studystream.app.domain.properties.TokenProperties
 import com.studystream.app.domain.service.AccountService
 import com.studystream.app.domain.service.TokenService
+import kotlinx.coroutines.Dispatchers
 import java.time.Instant
 import java.util.*
 
@@ -19,7 +19,7 @@ class TokenServiceImpl(
     override suspend fun refreshToken(
         token: String,
         refreshThresholdMillis: Long,
-    ): Result<TokenService.RefreshedToken> = runCatching {
+    ): Result<TokenService.RefreshedToken> = ioCatchingCall(Dispatchers.Default) {
         val decoded = JWT.decode(token)
 
         // TODO: add tests to business logic
@@ -35,8 +35,7 @@ class TokenServiceImpl(
             .asString()
             .toIntOrNull() ?: throw OperationRejectedException("Invalid token content")
 
-        val account = accountService.findUser(accountId)
-            ?: throw ResourceNotFoundException("User not found")
+        val account = accountService.getAccount(accountId).getOrThrow()
 
         val newToken = generate(account).getOrThrow()
 
@@ -46,11 +45,11 @@ class TokenServiceImpl(
         )
     }
 
-    override suspend fun generate(account: Account): Result<String> = ioCall {
+    override suspend fun generate(account: Account): Result<String> = ioCatchingCall {
         JWT.create()
             .withAudience(tokenProperties.audience)
             .withIssuer(tokenProperties.issuer)
-            .withClaim(tokenProperties.claimName, account.id.value.toString())
+            .withClaim(tokenProperties.claimName, account.idValue.toString())
             .withExpiresAt(Date(System.currentTimeMillis() + tokenProperties.ttl))
             .sign(Algorithm.HMAC256(tokenProperties.secret))
     }

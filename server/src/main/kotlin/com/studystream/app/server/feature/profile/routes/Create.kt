@@ -7,6 +7,7 @@ import com.studystream.app.domain.service.ProfileService
 import com.studystream.app.server.feature.profile.Profiles
 import com.studystream.app.server.mapper.toDto
 import com.studystream.app.server.security.requireAccount
+import com.studystream.app.server.utils.endpoint
 import com.studystream.app.server.utils.typeSafePost
 import com.studystream.shared.payload.dto.ProfileDto
 import com.studystream.shared.payload.request.CreateProfileRequest
@@ -37,12 +38,12 @@ suspend fun createProfile(
     account: Account,
     profileService: ProfileService,
     accountService: AccountService,
-): ProfileDto {
+): ProfileDto = endpoint {
     // TODO: add admin check
-    val profileAccount = body.accountId?.let { accountService.findUser(it) } ?: account
+    val profileAccount = body.accountId?.let { accountService.getAccount(it).getOrThrow() } ?: account
 
     if (profileService.existsProfile(
-            accountId = profileAccount.id.value,
+            accountId = profileAccount.idValue,
             name = body.name,
             surname = body.surname,
             patronymic = body.patronymic
@@ -51,7 +52,7 @@ suspend fun createProfile(
         throw InvalidInputException("Profile with such name already exists")
     }
 
-    return profileService
+    profileService
         .createProfile(
             owner = profileAccount,
             name = body.name,

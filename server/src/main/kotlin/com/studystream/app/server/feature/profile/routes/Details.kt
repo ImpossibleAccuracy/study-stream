@@ -1,10 +1,9 @@
 package com.studystream.app.server.feature.profile.routes
 
-import com.studystream.app.domain.exception.ResourceNotFoundException
-import com.studystream.app.domain.model.Id
 import com.studystream.app.domain.service.ProfileService
 import com.studystream.app.server.feature.profile.Profiles
 import com.studystream.app.server.mapper.toDto
+import com.studystream.app.server.utils.endpoint
 import com.studystream.app.server.utils.typeSafeGet
 import com.studystream.shared.payload.dto.ProfileDto
 import io.ktor.server.application.*
@@ -18,7 +17,7 @@ internal fun Routing.installGetProfileDetailsRoute() {
     authenticate {
         typeSafeGet<Profiles.ProfileId> { route ->
             val result = getProfileDetails(
-                id = route.id,
+                route = route,
                 profileService = call.get(),
             )
 
@@ -28,11 +27,12 @@ internal fun Routing.installGetProfileDetailsRoute() {
 }
 
 suspend fun getProfileDetails(
-    id: Id,
+    route: Profiles.ProfileId,
     profileService: ProfileService,
-): ProfileDto =
+): ProfileDto = endpoint {
     // TODO: add permissions check
     profileService
-        .getProfile(id)
-        ?.toDto()
-        ?: throw ResourceNotFoundException("Profile not found")
+        .getProfile(route.id)
+        .getOrThrow()
+        .toDto()
+}

@@ -15,11 +15,9 @@ interface DocumentService {
         mimeType: String,
     ): Result<Document.Type>
 
-    suspend fun findById(id: Int): Document?
-
     suspend fun findByHash(hash: String): Document?
 
-    suspend fun findTypeByMimeType(mimeType: String): Document.Type?
+    suspend fun findTypeByMimeType(mimeType: String): Result<Document.Type>
 
     suspend fun update(document: Document): Result<Document>
 

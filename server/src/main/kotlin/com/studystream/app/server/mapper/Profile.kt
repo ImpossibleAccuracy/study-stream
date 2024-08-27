@@ -4,11 +4,11 @@ import com.studystream.app.domain.model.Profile
 import com.studystream.shared.payload.dto.ProfileDto
 
 fun Profile.toDto() = ProfileDto(
-    id = id.value,
+    id = idValue,
     name = name,
     surname = surname,
     patronymic = patronymic,
     birthday = birthday,
-    accountId = accountId.value,
-    avatarId = avatarId?.value,
+    accountId = account.idValue,
+    avatarId = avatar?.idValue,
 )
