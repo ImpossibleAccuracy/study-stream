@@ -10,7 +10,15 @@ insert into `account` (`username`, `password`) values
 	("Jinus", "87654321"),
 	("Ornal", "qwerty"),
 	("Magito", "wasdwasd");
-	
+
+insert into `role_account` (`account_id`, `role_id`) values
+    (1, 1),
+    (2, 1), (2, 2), (2, 3),
+    (3, 1),
+    (4, 1),
+    (5, 1),
+    (6, 1), (6, 3);
+
 insert into `device` (`account_id`, `name`, `token`, `type_id`) values
 	(1, 'Samsung A20', "jkdfgdfgouireoirgeorignb", 1),
 	(1, 'Windows 10', "sdjkv34v89ndvklb34", 3),
@@ -18,7 +26,7 @@ insert into `device` (`account_id`, `name`, `token`, `type_id`) values
 	(3, 'Google Chrome', "hgjkhkjhkjiuiu", 4);
 	
 
-INSERT INTO `event` (`creator_id`, `placement_id`, `teacher_id`, `title`, `description`, `thumb_id`, `background_id`, `max_persons`, `min_persons`) values
+insert into `event` (`creator_id`, `placement_id`, `teacher_id`, `title`, `description`, `thumb_id`, `background_id`, `max_persons`, `min_persons`) values
 	(2, 1, 4, 'Huonai', 'Lorem ipsum...', null, null, 10, 2),
 	(6, 2, 4, 'Yolonku', 'Lorem ipsum1...', null, null, 15, 1),
 	(6, 3, 4, 'Jitonai', 'Lorem ipsum2...', null, null, 12, 2),
@@ -28,7 +36,7 @@ INSERT INTO `event` (`creator_id`, `placement_id`, `teacher_id`, `title`, `descr
 	(6, 1, 4, 'Mushitemitsu', 'Lorem ipsum6...', null, null, 10, 2);
 
 
-INSERT INTO `schedule` (`creator_id`, `event_id`, `day_of_week`, `start_time`, `end_time`, `status_id`) values
+insert into `schedule` (`creator_id`, `event_id`, `day_of_week`, `start_time`, `end_time`, `status_id`) values
 	(2, 1, 0, '08:00', '10:00', 3),
 	(2, 1, 2, '08:00', '10:00', 3),
 	(2, 1, 3, '18:00', '20:00', 3),

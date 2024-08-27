@@ -1,8 +1,12 @@
 package com.studystream.app.server.feature.account.routes
 
+import com.studystream.app.domain.model.Account
+import com.studystream.app.domain.security.Permission
 import com.studystream.app.domain.service.AccountService
 import com.studystream.app.server.feature.account.Accounts
 import com.studystream.app.server.mapper.toDto
+import com.studystream.app.server.security.requireAccount
+import com.studystream.app.server.security.requirePermission
 import com.studystream.app.server.utils.endpoint
 import com.studystream.app.server.utils.typeSafeGet
 import com.studystream.shared.payload.dto.AccountDto
@@ -18,6 +22,7 @@ internal fun Routing.installGetAccountsDetailsRoute() {
         typeSafeGet<Accounts.AccountId> { route ->
             val result = getAccountsDetails(
                 route = route,
+                account = call.requireAccount(),
                 accountService = call.get(),
             )
 
@@ -28,9 +33,11 @@ internal fun Routing.installGetAccountsDetailsRoute() {
 
 suspend fun getAccountsDetails(
     route: Accounts.AccountId,
+    account: Account,
     accountService: AccountService,
 ): AccountDto = endpoint {
-    // TODO: add admin check
+    account.requirePermission(Permission.READ_ACCOUNTS)
+
     accountService
         .getAccount(route.id)
         .getOrThrow()
