@@ -1,18 +1,12 @@
 package com.studystream.app.data.service
 
-import com.studystream.app.data.database.dao.AccountDao
-import com.studystream.app.data.database.tables.AccountTable
-import com.studystream.app.data.database.utils.exists
 import com.studystream.app.data.utils.ioCatchingCall
 import com.studystream.app.domain.exception.OperationRejectedException
-import com.studystream.app.domain.exception.ResourceNotFoundException
 import com.studystream.app.domain.model.Account
 import com.studystream.app.domain.service.AccountService
 import com.studystream.app.domain.service.AuthService
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 class AuthServiceImpl(
-    private val accountDao: AccountDao,
     private val accountService: AccountService,
     private val passwordManager: PasswordManager,
 ) : AuthService {
@@ -26,16 +20,10 @@ class AuthServiceImpl(
         return@ioCatchingCall account
     }
 
-    override suspend fun signUp(username: String, password: String): Result<Account> = ioCatchingCall {
-        if (accountDao.exists(AccountTable.username eq username)) {
-            throw ResourceNotFoundException("Username already used")
-        }
-
+    override suspend fun signUp(username: String, password: String): Result<Account> =
         accountService
             .createAccount(
                 username = username,
                 password = passwordManager.encrypt(password),
             )
-            .getOrThrow()
-    }
 }
