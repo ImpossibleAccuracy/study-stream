@@ -10,6 +10,8 @@ interface AccountService {
 
     suspend fun getAccount(id: Int): Result<Account>
 
+    suspend fun getAccounts(): List<Account>
+
     suspend fun getAccount(username: String): Result<Account>
 
     suspend fun updateAccount(id: Int, username: String): Result<Account>
