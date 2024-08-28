@@ -2,9 +2,11 @@ package com.studystream.app.server.feature.ticket.routes
 
 import com.studystream.app.domain.model.Account
 import com.studystream.app.domain.model.Id
+import com.studystream.app.domain.security.Permission
 import com.studystream.app.domain.service.TicketService
 import com.studystream.app.server.feature.ticket.Tickets
 import com.studystream.app.server.mapper.toDto
+import com.studystream.app.server.security.hasPermission
 import com.studystream.app.server.security.requireAccount
 import com.studystream.app.server.utils.endpoint
 import com.studystream.app.server.utils.typeSafeGet
@@ -39,13 +41,13 @@ suspend fun getTicketsList(
     account: Account,
     ticketService: TicketService,
 ): List<TicketDto> = endpoint {
-    // TODO: add permissions check
-    // If account is admin -> can get all tickets
-    // Else ownerId is replaced by account.id
     ticketService
         .getTickets(
             filters = TicketService.Filters(
-                ownerId = ownerId ?: account.idValue,
+                ownerId = when {
+                    ownerId == null || account.hasPermission(Permission.TICKETS_READ) -> ownerId
+                    else -> account.idValue
+                },
                 profileId = profileId,
                 typeId = typeId,
             )

@@ -1,7 +1,11 @@
 package com.studystream.app.server.feature.ticket.routes
 
+import com.studystream.app.domain.model.Account
+import com.studystream.app.domain.security.Permission
 import com.studystream.app.domain.service.TicketService
 import com.studystream.app.server.feature.ticket.Tickets
+import com.studystream.app.server.security.requireAccount
+import com.studystream.app.server.security.requirePermission
 import com.studystream.app.server.utils.endpoint
 import com.studystream.app.server.utils.typeSafeGet
 import io.ktor.http.*
@@ -16,6 +20,7 @@ internal fun Route.installDeleteTicketRoute() {
         typeSafeGet<Tickets.TicketId> { route ->
             deleteTicket(
                 route = route,
+                account = call.requireAccount(),
                 ticketService = call.get(),
             )
 
@@ -26,10 +31,16 @@ internal fun Route.installDeleteTicketRoute() {
 
 suspend fun deleteTicket(
     route: Tickets.TicketId,
+    account: Account,
     ticketService: TicketService,
 ) = endpoint {
-    // TODO: add permissions check
+    val ticket = ticketService.getTicket(route.id).getOrThrow()
+
+    if (ticket.owner.idValue != account.idValue) {
+        account.requirePermission(Permission.TICKETS_DELETE)
+    }
+
     ticketService
-        .deleteTicket(ticket = ticketService.getTicket(route.id).getOrThrow())
+        .deleteTicket(ticket = ticket)
         .getOrThrow()
 }

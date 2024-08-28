@@ -38,7 +38,7 @@ suspend fun createAccount(
     account: Account,
     authService: AuthService,
 ): AccountDto = endpoint {
-    account.requirePermission(Permission.CREATE_ACCOUNTS)
+    account.requirePermission(Permission.ACCOUNTS_CREATE)
 
     authService
         .signUp(body().username, body().password)

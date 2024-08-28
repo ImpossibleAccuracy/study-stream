@@ -37,13 +37,10 @@ suspend fun getDevicesList(
     account: Account,
     deviceService: DeviceService,
 ): List<DeviceDto> = endpoint {
-    // TODO: add permissions check
-    // If account is admin -> can get all devices
-    // Else ownerId is replaced by account.id
     deviceService
         .getDevices(
             filters = DeviceService.Filters(
-                ownerId = choiceIdByPermission(account, Permission.READ_ALL_DEVICES, account.idValue, route.ownerId),
+                ownerId = account.choiceIdByPermission(Permission.DEVICES_READ, route.ownerId),
                 deviceType = route.deviceType.fromDto().nullIfNotSpecified(),
             )
         )

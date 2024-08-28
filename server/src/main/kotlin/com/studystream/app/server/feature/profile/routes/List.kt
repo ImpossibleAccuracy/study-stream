@@ -1,8 +1,12 @@
 package com.studystream.app.server.feature.profile.routes
 
+import com.studystream.app.domain.model.Account
+import com.studystream.app.domain.security.Permission
 import com.studystream.app.domain.service.ProfileService
 import com.studystream.app.server.feature.profile.Profiles
 import com.studystream.app.server.mapper.toDto
+import com.studystream.app.server.security.hasPermission
+import com.studystream.app.server.security.requireAccount
 import com.studystream.app.server.utils.endpoint
 import com.studystream.app.server.utils.typeSafeGet
 import com.studystream.shared.payload.dto.ProfileDto
@@ -18,6 +22,7 @@ internal fun Routing.installGetProfilesListRoute() {
         typeSafeGet<Profiles.List> { route ->
             val result = getProfilesList(
                 route = route,
+                account = call.requireAccount(),
                 profileService = call.get(),
             )
 
@@ -28,15 +33,20 @@ internal fun Routing.installGetProfilesListRoute() {
 
 suspend fun getProfilesList(
     route: Profiles.List,
+    account: Account,
     profileService: ProfileService,
 ): List<ProfileDto> = endpoint {
-    // TODO: add permissions check
-    // If account is admin -> can get all profiles
-    // Else ownerId is replaced by account.id
-    val items = when (route.ownerId) {
-        null -> profileService.getProfiles()
+    val canReadAllProfiles = account.hasPermission(Permission.PROFILES_READ)
 
-        else -> profileService.getProfilesByOwner(route.ownerId)
+    val items = if (route.ownerId == null && canReadAllProfiles) {
+        profileService.getProfiles()
+    } else {
+        profileService.getProfilesByOwner(
+            ownerId = when {
+                canReadAllProfiles -> route.ownerId ?: account.idValue
+                else -> account.idValue
+            }
+        )
     }
 
     items.map {

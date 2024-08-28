@@ -35,7 +35,7 @@ suspend fun deleteAccount(
     account: Account,
     accountService: AccountService,
 ) = endpoint {
-    account.requirePermission(Permission.DELETE_ACCOUNTS)
+    account.requirePermission(Permission.ACCOUNTS_DELETE)
 
     accountService
         .deleteAccount(route.id)

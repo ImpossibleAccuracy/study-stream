@@ -41,7 +41,7 @@ suspend fun updateAccount(
     body: LazyBody<UpdateAccountRequest>,
     accountService: AccountService,
 ): AccountDto = endpoint {
-    account.requirePermission(Permission.UPDATE_ANY_ACCOUNTS)
+    account.requirePermission(Permission.ACCOUNTS_UPDATE)
 
     accountService
         .updateAccount(route.id, body().username)

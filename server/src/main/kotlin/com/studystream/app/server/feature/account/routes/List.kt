@@ -34,7 +34,7 @@ suspend fun getAccountsList(
     account: Account,
     accountService: AccountService,
 ): List<AccountDto> = endpoint {
-    account.requirePermission(Permission.READ_ACCOUNTS)
+    account.requirePermission(Permission.ACCOUNTS_READ)
 
     accountService
         .getAccounts()

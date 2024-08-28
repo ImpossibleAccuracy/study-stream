@@ -1,9 +1,13 @@
 package com.studystream.app.server.feature.ticket.routes
 
+import com.studystream.app.domain.model.Account
+import com.studystream.app.domain.security.Permission
 import com.studystream.app.domain.service.ProfileService
 import com.studystream.app.domain.service.TicketService
 import com.studystream.app.server.feature.ticket.Tickets
 import com.studystream.app.server.mapper.toDto
+import com.studystream.app.server.security.requireAccount
+import com.studystream.app.server.security.requirePermission
 import com.studystream.app.server.utils.endpoint
 import com.studystream.app.server.utils.typeSafeGet
 import com.studystream.shared.payload.dto.TicketDto
@@ -20,6 +24,7 @@ internal fun Route.installUpdateTicketRoute() {
         typeSafeGet<Tickets.TicketId> { route ->
             val result = updateTicket(
                 route = route,
+                account = call.requireAccount(),
                 body = call.receive(),
                 ticketService = call.get(),
                 profileService = call.get(),
@@ -32,12 +37,16 @@ internal fun Route.installUpdateTicketRoute() {
 
 suspend fun updateTicket(
     route: Tickets.TicketId,
+    account: Account,
     body: UpdateTicketRequest,
     ticketService: TicketService,
     profileService: ProfileService,
 ): TicketDto = endpoint {
-    // TODO: add permissions check
     val ticket = ticketService.getTicket(route.id).getOrThrow()
+
+    if (ticket.owner.idValue != account.idValue) {
+        account.requirePermission(Permission.TICKETS_UPDATE)
+    }
 
     ticketService
         .updateTicket(

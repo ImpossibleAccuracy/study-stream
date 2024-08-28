@@ -13,37 +13,27 @@ import io.ktor.server.auth.*
 fun ApplicationCall.requireAccount(): Account = principal<AccountPrincipal>()?.account
     ?: throw ServiceException("Unauthorized", HttpStatusCode.Unauthorized.value)
 
-fun Account.requirePermission(permission: Permission) =
-    roles
-        .none { role ->
-            role.privileges.any {
-                it.permission == permission
-            }
+fun Account.hasPermission(permission: Permission): Boolean =
+    roles.any { role ->
+        role.privileges.any {
+            it.permission == permission
         }
-        .let { noPermission ->
-            if (noPermission) {
-                throw OperationRejectedException("Not enough rights")
-            }
-        }
+    }
 
-fun choiceIdByPermission(
-    account: Account,
+fun Account.requirePermission(permission: Permission) {
+    if (!hasPermission(permission)) {
+        throw OperationRejectedException("Not enough rights")
+    }
+}
+
+fun Account.choiceIdByPermission(
     permission: Permission,
-    ownId: Id,
     requestedId: Id?
 ): Id {
-    if (requestedId == null) return ownId
+    if (requestedId == null) return idValue
 
-    return account.roles
-        .any { role ->
-            role.privileges.any {
-                it.permission == permission
-            }
-        }
-        .let {
-            when (it) {
-                true -> ownId
-                false -> requestedId
-            }
-        }
+    return when (hasPermission(permission)) {
+        true -> requestedId
+        false -> idValue
+    }
 }

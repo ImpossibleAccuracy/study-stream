@@ -1,7 +1,11 @@
 package com.studystream.app.server.feature.ticket.routes.type
 
+import com.studystream.app.domain.model.Account
+import com.studystream.app.domain.security.Permission
 import com.studystream.app.domain.service.TicketService
 import com.studystream.app.server.feature.ticket.Tickets
+import com.studystream.app.server.security.requireAccount
+import com.studystream.app.server.security.requirePermission
 import com.studystream.app.server.utils.endpoint
 import com.studystream.app.server.utils.typeSafeDelete
 import io.ktor.http.*
@@ -16,6 +20,7 @@ internal fun Route.installDeleteTicketTypeRoute() {
         typeSafeDelete<Tickets.Types.TypeId> { route ->
             deleteTicketType(
                 route = route,
+                account = call.requireAccount(),
                 ticketService = call.get(),
             )
 
@@ -26,9 +31,11 @@ internal fun Route.installDeleteTicketTypeRoute() {
 
 suspend fun deleteTicketType(
     route: Tickets.Types.TypeId,
+    account: Account,
     ticketService: TicketService,
 ) = endpoint {
-    // TODO: check permissions to delete ticket type
+    account.requirePermission(Permission.TICKET_TYPES_DELETE)
+
     ticketService
         .deleteTicketType(
             type = ticketService.getTicketType(route.id).getOrThrow()

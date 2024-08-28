@@ -1,11 +1,15 @@
 package com.studystream.app.server.feature.profile.routes.avatar
 
 import com.studystream.app.domain.exception.InvalidInputException
+import com.studystream.app.domain.model.Account
 import com.studystream.app.domain.model.MultipartFile
 import com.studystream.app.domain.model.StorageCatalog
+import com.studystream.app.domain.security.Permission
 import com.studystream.app.domain.service.FileStorageService
 import com.studystream.app.domain.service.ProfileService
 import com.studystream.app.server.feature.profile.Profiles
+import com.studystream.app.server.security.requireAccount
+import com.studystream.app.server.security.requirePermission
 import com.studystream.app.server.utils.endpoint
 import com.studystream.app.server.utils.receiveFile
 import com.studystream.app.server.utils.typeSafePut
@@ -28,6 +32,7 @@ internal fun Routing.installUpdateProfileAvatarRoute() {
                     )
                     ?: throw InvalidInputException("No avatar presented"),
                 route = route,
+                account = call.requireAccount(),
                 profileService = call.get(),
                 fileStorageService = call.get(),
             )
@@ -40,10 +45,15 @@ internal fun Routing.installUpdateProfileAvatarRoute() {
 suspend fun updateProfileAvatar(
     avatar: MultipartFile,
     route: Profiles.ProfileId.Avatar,
+    account: Account,
     profileService: ProfileService,
     fileStorageService: FileStorageService,
 ) = endpoint {
     val profile = profileService.getProfile(route.parent.id).getOrThrow()
+
+    if (profile.account.id != account.id) {
+        account.requirePermission(Permission.PROFILES_UPDATE)
+    }
 
     val avatarDocument = fileStorageService
         .store(avatar, StorageCatalog.Temp)

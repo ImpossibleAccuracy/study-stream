@@ -36,7 +36,7 @@ suspend fun getAccountsDetails(
     account: Account,
     accountService: AccountService,
 ): AccountDto = endpoint {
-    account.requirePermission(Permission.READ_ACCOUNTS)
+    account.requirePermission(Permission.ACCOUNTS_READ)
 
     accountService
         .getAccount(route.id)
