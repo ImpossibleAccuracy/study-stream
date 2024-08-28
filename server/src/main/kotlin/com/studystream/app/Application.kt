@@ -22,10 +22,7 @@ fun Application.module() {
     configureKoin(properties)
     configureMonitoring()
     configureSerialization()
-    configureSecurity(
-        tokenProperties = properties.token,
-        accountService = get()
-    )
+    configureSecurity()
     configureSockets()
     configureRouting()
     configureApiRoutes()

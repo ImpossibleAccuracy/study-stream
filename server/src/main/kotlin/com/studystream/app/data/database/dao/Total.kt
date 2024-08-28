@@ -21,6 +21,6 @@ object TicketDao : BaseDao<Ticket>(TicketTable, Ticket::class) {
     object TypeDao : BaseDao<Ticket.Type>(TicketTypeTable, Ticket.Type::class)
 }
 
-object RoleDao : IntEntityClass<Role>(RoleTable, Role::class.java)
+object RoleDao : IntEntityClass<AccountRole>(RoleTable, AccountRole::class.java)
 
 object PrivilegeDao : IntEntityClass<Privilege>(PrivilegeTable, Privilege::class.java)
