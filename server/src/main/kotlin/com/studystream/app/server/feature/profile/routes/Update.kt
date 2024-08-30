@@ -1,9 +1,13 @@
 package com.studystream.app.server.feature.profile.routes
 
 import com.studystream.app.domain.exception.InvalidInputException
+import com.studystream.app.domain.model.Account
+import com.studystream.app.domain.security.Permission
 import com.studystream.app.domain.service.ProfileService
 import com.studystream.app.server.feature.profile.Profiles
 import com.studystream.app.server.mapper.toDto
+import com.studystream.app.server.security.requireAccount
+import com.studystream.app.server.security.requirePermission
 import com.studystream.app.server.utils.endpoint
 import com.studystream.app.server.utils.typeSafePut
 import com.studystream.shared.payload.dto.ProfileDto
@@ -20,6 +24,7 @@ internal fun Routing.installUpdateProfileRoute() {
         typeSafePut<Profiles.ProfileId> { route ->
             val result = updateProfile(
                 route = route,
+                account = call.requireAccount(),
                 body = call.receive(),
                 profileService = call.get(),
             )
@@ -31,10 +36,15 @@ internal fun Routing.installUpdateProfileRoute() {
 
 suspend fun updateProfile(
     route: Profiles.ProfileId,
+    account: Account,
     body: UpdateProfileRequest,
     profileService: ProfileService,
 ): ProfileDto = endpoint {
     val profile = profileService.getProfile(route.id).getOrThrow()
+
+    if (profile.account.idValue != account.idValue) {
+        account.requirePermission(Permission.PROFILES_UPDATE)
+    }
 
     if (profileService.existsProfile(
             accountId = profile.account.idValue,

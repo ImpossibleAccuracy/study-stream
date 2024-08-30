@@ -1,8 +1,12 @@
 package com.studystream.app.server.feature.ticket.routes
 
+import com.studystream.app.domain.model.Account
+import com.studystream.app.domain.security.Permission
 import com.studystream.app.domain.service.TicketService
 import com.studystream.app.server.feature.ticket.Tickets
 import com.studystream.app.server.mapper.toDto
+import com.studystream.app.server.security.requireAccount
+import com.studystream.app.server.security.requirePermission
 import com.studystream.app.server.utils.endpoint
 import com.studystream.app.server.utils.typeSafeGet
 import com.studystream.shared.payload.dto.TicketDto
@@ -17,6 +21,7 @@ internal fun Route.installGetTicketDetailsRoute() {
         typeSafeGet<Tickets.TicketId> { route ->
             val result = getTicketDetails(
                 route = route,
+                account = call.requireAccount(),
                 ticketService = call.get(),
             )
 
@@ -27,13 +32,18 @@ internal fun Route.installGetTicketDetailsRoute() {
 
 suspend fun getTicketDetails(
     route: Tickets.TicketId,
+    account: Account,
     ticketService: TicketService,
 ): TicketDto = endpoint {
-    // TODO: add permissions check
     ticketService
         .getTicket(
             ticketId = route.id,
         )
         .getOrThrow()
+        .also {
+            if (it.owner.idValue != account.idValue) {
+                account.requirePermission(Permission.TICKETS_READ)
+            }
+        }
         .toDto()
 }

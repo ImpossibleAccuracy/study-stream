@@ -66,8 +66,14 @@ class AccountServiceImpl(
     }
 
     override suspend fun deleteAccount(id: Int): Result<Unit> = ioCatchingCall {
-        AccountTable.deleteWhere {
-            this@deleteWhere.id eq id
-        }
+        AccountTable
+            .deleteWhere {
+                this@deleteWhere.id eq id
+            }
+            .let { deletedRows ->
+                if (deletedRows == 0) {
+                    throw ResourceNotFoundException("Account not found")
+                }
+            }
     }
 }

@@ -1,8 +1,12 @@
 package com.studystream.app.server.feature.profile.routes
 
+import com.studystream.app.domain.model.Account
+import com.studystream.app.domain.security.Permission
 import com.studystream.app.domain.service.ProfileService
 import com.studystream.app.server.feature.profile.Profiles
 import com.studystream.app.server.mapper.toDto
+import com.studystream.app.server.security.requireAccount
+import com.studystream.app.server.security.requirePermission
 import com.studystream.app.server.utils.endpoint
 import com.studystream.app.server.utils.typeSafeGet
 import com.studystream.shared.payload.dto.ProfileDto
@@ -18,6 +22,7 @@ internal fun Routing.installGetProfileDetailsRoute() {
         typeSafeGet<Profiles.ProfileId> { route ->
             val result = getProfileDetails(
                 route = route,
+                account = call.requireAccount(),
                 profileService = call.get(),
             )
 
@@ -28,11 +33,16 @@ internal fun Routing.installGetProfileDetailsRoute() {
 
 suspend fun getProfileDetails(
     route: Profiles.ProfileId,
+    account: Account,
     profileService: ProfileService,
 ): ProfileDto = endpoint {
-    // TODO: add permissions check
     profileService
         .getProfile(route.id)
         .getOrThrow()
+        .also {
+            if (it.account.idValue != account.idValue) {
+                account.requirePermission(Permission.PROFILES_READ)
+            }
+        }
         .toDto()
 }

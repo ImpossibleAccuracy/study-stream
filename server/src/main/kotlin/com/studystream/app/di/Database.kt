@@ -12,6 +12,8 @@ val databaseModule = module(createdAtStart = true) {
     }
 
     single { AccountDao }
+    single { RoleDao }
+    single { PrivilegeDao }
     single { ProfileDao }
     single { DocumentDao }
     single { DocumentTypeDao }

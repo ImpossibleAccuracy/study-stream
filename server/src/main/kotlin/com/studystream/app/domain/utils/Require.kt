@@ -7,7 +7,7 @@ import com.studystream.app.domain.model.Profile
 import com.studystream.app.domain.model.Ticket
 
 fun Account?.require(): Account =
-    require("account not found")
+    require("Account not found")
 
 fun Profile?.require(): Profile =
     require("Profile not found")

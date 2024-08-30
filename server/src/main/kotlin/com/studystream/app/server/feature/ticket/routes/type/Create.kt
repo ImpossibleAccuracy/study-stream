@@ -1,10 +1,12 @@
 package com.studystream.app.server.feature.ticket.routes.type
 
 import com.studystream.app.domain.model.Account
+import com.studystream.app.domain.security.Permission
 import com.studystream.app.domain.service.TicketService
 import com.studystream.app.server.feature.ticket.Tickets
 import com.studystream.app.server.mapper.toDto
 import com.studystream.app.server.security.requireAccount
+import com.studystream.app.server.security.requirePermission
 import com.studystream.app.server.utils.endpoint
 import com.studystream.app.server.utils.typeSafePost
 import com.studystream.shared.payload.dto.TicketTypeDto
@@ -35,7 +37,8 @@ suspend fun createTicketType(
     account: Account,
     ticketService: TicketService,
 ): TicketTypeDto = endpoint {
-    // TODO: check permissions to create ticket type
+    account.requirePermission(Permission.TICKET_TYPES_CREATE)
+
     ticketService
         .createTicketType(
             title = body.title,

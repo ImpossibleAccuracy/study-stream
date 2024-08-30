@@ -2,10 +2,12 @@ package com.studystream.app.server.feature.profile.routes
 
 import com.studystream.app.domain.exception.InvalidInputException
 import com.studystream.app.domain.model.Account
+import com.studystream.app.domain.security.Permission
 import com.studystream.app.domain.service.AccountService
 import com.studystream.app.domain.service.ProfileService
 import com.studystream.app.server.feature.profile.Profiles
 import com.studystream.app.server.mapper.toDto
+import com.studystream.app.server.security.choiceIdByPermission
 import com.studystream.app.server.security.requireAccount
 import com.studystream.app.server.utils.endpoint
 import com.studystream.app.server.utils.typeSafePost
@@ -39,8 +41,14 @@ suspend fun createProfile(
     profileService: ProfileService,
     accountService: AccountService,
 ): ProfileDto = endpoint {
-    // TODO: add admin check
-    val profileAccount = body.accountId?.let { accountService.getAccount(it).getOrThrow() } ?: account
+    val profileAccount = accountService
+        .getAccount(
+            account.choiceIdByPermission(
+                permission = Permission.PROFILES_CREATE,
+                requestedId = body.accountId,
+            )
+        )
+        .getOrThrow()
 
     if (profileService.existsProfile(
             accountId = profileAccount.idValue,

@@ -1,11 +1,13 @@
 package com.studystream.app.server.feature.ticket.routes
 
 import com.studystream.app.domain.model.Account
+import com.studystream.app.domain.security.Permission
 import com.studystream.app.domain.service.AccountService
 import com.studystream.app.domain.service.ProfileService
 import com.studystream.app.domain.service.TicketService
 import com.studystream.app.server.feature.ticket.Tickets
 import com.studystream.app.server.mapper.toDto
+import com.studystream.app.server.security.choiceIdByPermission
 import com.studystream.app.server.security.requireAccount
 import com.studystream.app.server.utils.endpoint
 import com.studystream.app.server.utils.typeSafePost
@@ -41,9 +43,10 @@ suspend fun createTicket(
     accountService: AccountService,
     profileService: ProfileService,
 ): TicketDto = endpoint {
-    // TODO: check permissions to create ticket
+    val creator = accountService
+        .getAccount(id = account.choiceIdByPermission(Permission.TICKETS_CREATE, body.ownerId))
+        .getOrThrow()
 
-    val creator = body.ownerId?.let { accountService.getAccount(it).getOrThrow() } ?: account
     val profile = profileService.getProfile(body.profileId).getOrThrow()
     val type = ticketService.getTicketType(body.typeId).getOrThrow()
 

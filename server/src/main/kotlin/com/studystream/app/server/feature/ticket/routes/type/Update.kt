@@ -1,8 +1,12 @@
 package com.studystream.app.server.feature.ticket.routes.type
 
+import com.studystream.app.domain.model.Account
+import com.studystream.app.domain.security.Permission
 import com.studystream.app.domain.service.TicketService
 import com.studystream.app.server.feature.ticket.Tickets
 import com.studystream.app.server.mapper.toDto
+import com.studystream.app.server.security.requireAccount
+import com.studystream.app.server.security.requirePermission
 import com.studystream.app.server.utils.endpoint
 import com.studystream.app.server.utils.typeSafePut
 import com.studystream.shared.payload.dto.TicketTypeDto
@@ -19,6 +23,7 @@ internal fun Route.installUpdateTicketTypeRoute() {
         typeSafePut<Tickets.Types.TypeId> { route ->
             val result = updateTicketType(
                 route = route,
+                account = call.requireAccount(),
                 body = call.receive<UpsertTicketTypeRequest>(),
                 ticketService = call.get(),
             )
@@ -30,10 +35,12 @@ internal fun Route.installUpdateTicketTypeRoute() {
 
 suspend fun updateTicketType(
     route: Tickets.Types.TypeId,
+    account: Account,
     body: UpsertTicketTypeRequest,
     ticketService: TicketService,
 ): TicketTypeDto = endpoint {
-    // TODO: check permissions to update ticket type
+    account.requirePermission(Permission.TICKET_TYPES_UPDATE)
+
     ticketService
         .updateTicketType(
             type = ticketService.getTicketType(route.id).getOrThrow(),

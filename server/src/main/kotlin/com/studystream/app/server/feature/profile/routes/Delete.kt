@@ -1,7 +1,11 @@
 package com.studystream.app.server.feature.profile.routes
 
+import com.studystream.app.domain.model.Account
+import com.studystream.app.domain.security.Permission
 import com.studystream.app.domain.service.ProfileService
 import com.studystream.app.server.feature.profile.Profiles
+import com.studystream.app.server.security.requireAccount
+import com.studystream.app.server.security.requirePermission
 import com.studystream.app.server.utils.endpoint
 import com.studystream.app.server.utils.typeSafeDelete
 import io.ktor.http.*
@@ -16,6 +20,7 @@ internal fun Routing.installDeleteProfileRoute() {
         typeSafeDelete<Profiles.ProfileId> { route ->
             deleteProfile(
                 route = route,
+                account = call.requireAccount(),
                 profileService = call.get(),
             )
 
@@ -26,12 +31,18 @@ internal fun Routing.installDeleteProfileRoute() {
 
 suspend fun deleteProfile(
     route: Profiles.ProfileId,
+    account: Account,
     profileService: ProfileService,
 ) = endpoint {
-    // TODO: add permissions check
+    val profile = profileService.getProfile(route.id).getOrThrow()
+
+    if (profile.account.idValue != account.idValue) {
+        account.requirePermission(Permission.PROFILES_DELETE)
+    }
+
     profileService
         .deleteProfile(
-            profile = profileService.getProfile(route.id).getOrThrow(),
+            profile = profile,
         )
         .getOrThrow()
 }

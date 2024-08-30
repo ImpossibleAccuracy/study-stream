@@ -1,8 +1,13 @@
 package com.studystream.app.server.feature.account.routes
 
+import com.studystream.app.domain.model.Account
+import com.studystream.app.domain.security.Permission
 import com.studystream.app.domain.service.AuthService
 import com.studystream.app.server.feature.account.Accounts
 import com.studystream.app.server.mapper.toDto
+import com.studystream.app.server.security.requireAccount
+import com.studystream.app.server.security.requirePermission
+import com.studystream.app.server.utils.LazyBody
 import com.studystream.app.server.utils.endpoint
 import com.studystream.app.server.utils.typeSafePost
 import com.studystream.shared.payload.dto.AccountDto
@@ -18,7 +23,8 @@ internal fun Routing.installCreateAccountRoute() {
     authenticate {
         typeSafePost<Accounts> {
             val result = createAccount(
-                body = call.receive(),
+                body = LazyBody { call.receive() },
+                account = call.requireAccount(),
                 authService = call.get(),
             )
 
@@ -28,12 +34,14 @@ internal fun Routing.installCreateAccountRoute() {
 }
 
 suspend fun createAccount(
-    body: CreateAccountRequest,
+    body: LazyBody<CreateAccountRequest>,
+    account: Account,
     authService: AuthService,
 ): AccountDto = endpoint {
-    // TODO: add admin check
+    account.requirePermission(Permission.ACCOUNTS_CREATE)
+
     authService
-        .signUp(body.username, body.password)
+        .signUp(body().username, body().password)
         .getOrThrow()
         .toDto()
 }

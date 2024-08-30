@@ -1,10 +1,12 @@
 package com.studystream.app.server.feature.account.routes.device
 
 import com.studystream.app.domain.model.Account
+import com.studystream.app.domain.security.Permission
 import com.studystream.app.domain.service.DeviceService
 import com.studystream.app.server.feature.account.Accounts
 import com.studystream.app.server.mapper.fromDto
 import com.studystream.app.server.mapper.toDto
+import com.studystream.app.server.security.choiceIdByPermission
 import com.studystream.app.server.security.requireAccount
 import com.studystream.app.server.utils.endpoint
 import com.studystream.app.server.utils.typeSafeGet
@@ -35,13 +37,10 @@ suspend fun getDevicesList(
     account: Account,
     deviceService: DeviceService,
 ): List<DeviceDto> = endpoint {
-    // TODO: add permissions check
-    // If account is admin -> can get all devices
-    // Else ownerId is replaced by account.id
     deviceService
         .getDevices(
             filters = DeviceService.Filters(
-                ownerId = route.ownerId ?: account.idValue,
+                ownerId = account.choiceIdByPermission(Permission.DEVICES_READ, route.ownerId),
                 deviceType = route.deviceType.fromDto().nullIfNotSpecified(),
             )
         )
