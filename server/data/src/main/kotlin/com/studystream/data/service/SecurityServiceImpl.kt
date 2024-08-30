@@ -61,18 +61,22 @@ class SecurityServiceImpl(
                     val dbRole = dbRoles.first { it.title == role.roleName }
 
                     role.permissions
+                        .toList()
                         .filter { permission ->
-                            dbRole.privileges.none { it.title == permission.privilegeName }
+                            dbRole.privileges
+                                .toList()
+                                .none { it.title == permission.privilegeName }
                         }
-                        .map { it.privilegeName }
-                        .also {
+                        .takeIf { it.isNotEmpty() }
+                        ?.map { it.privilegeName }
+                        ?.also { missingPrivileges ->
                             val list = privilegeDao.find {
-                                PrivilegeTable.title inList it
+                                PrivilegeTable.title inList missingPrivileges
                             }
 
                             dbRole.privileges = dbRole.privileges.plus(list).toSizedCollection()
                         }
-                        .isNotEmpty()
+                        ?.isNotEmpty() ?: false
                 }
             }
             .count { it.await() }
