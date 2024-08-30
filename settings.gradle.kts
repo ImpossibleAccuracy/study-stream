@@ -20,7 +20,10 @@ dependencyResolutionManagement {
 
 include(":shared:payload")
 
-include(":server")
+include(":server:app")
+include(":server:domain")
+include(":server:data")
+include(":server:di")
 //include(":server:core:data")
 //include(":server:core:domain")
 //include(":server:core:di")

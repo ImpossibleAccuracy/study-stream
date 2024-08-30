@@ -8,7 +8,7 @@ WORKDIR $BUILD_PATH
  COPY gradle.properties .
 COPY gradle/ gradle/
 
-COPY build.gradle.kts .
+COPY domain/build.gradle.kts .
 COPY settings.gradle.kts .
 COPY buildSrc/ buildSrc/
 COPY shared/ shared/
