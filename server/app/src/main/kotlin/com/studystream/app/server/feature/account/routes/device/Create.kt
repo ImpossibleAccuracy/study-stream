@@ -1,7 +1,7 @@
 package com.studystream.app.server.feature.account.routes.device
 
 import com.studystream.domain.model.Account
-import com.studystream.domain.service.DeviceService
+import com.studystream.domain.repository.DeviceRepository
 import com.studystream.app.server.feature.account.Accounts
 import com.studystream.app.server.mapper.fromDto
 import com.studystream.app.server.mapper.toDto
@@ -23,7 +23,7 @@ internal fun Routing.installSaveDeviceRoute() {
             val result = createProfile(
                 body = call.receive(),
                 account = call.requireAccount(),
-                deviceService = call.get(),
+                deviceRepository = call.get(),
             )
 
             call.respond(result)
@@ -34,9 +34,9 @@ internal fun Routing.installSaveDeviceRoute() {
 suspend fun createProfile(
     body: SaveDeviceRequest,
     account: Account,
-    deviceService: DeviceService,
+    deviceRepository: DeviceRepository,
 ): DeviceDto = endpoint {
-    deviceService
+    deviceRepository
         .saveDevice(
             owner = account,
             name = body.name,

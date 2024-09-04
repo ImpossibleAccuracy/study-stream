@@ -3,7 +3,7 @@ package com.studystream.app.server.feature.profile.routes
 import com.studystream.domain.exception.InvalidInputException
 import com.studystream.domain.model.Account
 import com.studystream.domain.security.Permission
-import com.studystream.domain.service.ProfileService
+import com.studystream.domain.repository.ProfileRepository
 import com.studystream.app.server.feature.profile.Profiles
 import com.studystream.app.server.mapper.toDto
 import com.studystream.app.server.security.requireAccount
@@ -26,7 +26,7 @@ internal fun Routing.installUpdateProfileRoute() {
                 route = route,
                 account = call.requireAccount(),
                 body = call.receive(),
-                profileService = call.get(),
+                profileRepository = call.get(),
             )
 
             call.respond(result)
@@ -38,15 +38,15 @@ suspend fun updateProfile(
     route: Profiles.ProfileId,
     account: Account,
     body: UpdateProfileRequest,
-    profileService: ProfileService,
+    profileRepository: ProfileRepository,
 ): ProfileDto = endpoint {
-    val profile = profileService.getProfile(route.id).getOrThrow()
+    val profile = profileRepository.getProfile(route.id).getOrThrow()
 
     if (profile.account.idValue != account.idValue) {
         account.requirePermission(Permission.PROFILES_UPDATE)
     }
 
-    if (profileService.existsProfile(
+    if (profileRepository.existsProfile(
             accountId = profile.account.idValue,
             name = body.name,
             surname = body.surname,
@@ -57,7 +57,7 @@ suspend fun updateProfile(
         throw InvalidInputException("Profile with such name already exists")
     }
 
-    profileService
+    profileRepository
         .updateProfile(
             profile = profile,
             name = body.name,

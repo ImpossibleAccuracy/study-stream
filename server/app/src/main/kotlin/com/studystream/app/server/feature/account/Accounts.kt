@@ -29,7 +29,7 @@ class Accounts(
     @Serializable
     @Resource("")
     class List(
-        @Suppress("unused") val parent: Device = Device()
+        @Suppress("unused") val parent: Accounts = Accounts()
     )
 
     @Serializable

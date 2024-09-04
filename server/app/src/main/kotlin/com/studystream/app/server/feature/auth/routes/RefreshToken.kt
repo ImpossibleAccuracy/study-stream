@@ -3,7 +3,7 @@ package com.studystream.app.server.feature.auth.routes
 import com.studystream.domain.exception.InvalidInputException
 import com.studystream.domain.exception.OperationRejectedException
 import com.studystream.domain.properties.feature.AuthProperties
-import com.studystream.domain.service.TokenService
+import com.studystream.domain.repository.TokenRepository
 import com.studystream.app.server.feature.auth.AuthRoute
 import com.studystream.app.server.utils.endpoint
 import com.studystream.app.server.utils.typeSafePost
@@ -27,7 +27,7 @@ internal fun Routing.installRefreshToken() {
         val result = refreshTokenRoute(
             token = token.substring(TOKEN_PREFIX.length),
             properties = call.get(),
-            tokenService = call.get(),
+            tokenRepository = call.get(),
         )
 
         call.respond(result)
@@ -37,9 +37,9 @@ internal fun Routing.installRefreshToken() {
 suspend fun refreshTokenRoute(
     token: String,
     properties: AuthProperties,
-    tokenService: TokenService,
+    tokenRepository: TokenRepository,
 ): AuthResponse = endpoint {
-    tokenService
+    tokenRepository
         .refreshToken(token, properties.tokenRefreshThresholdMillis)
         .getOrThrow()
         .let {

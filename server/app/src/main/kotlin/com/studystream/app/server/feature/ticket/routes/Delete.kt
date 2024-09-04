@@ -2,7 +2,7 @@ package com.studystream.app.server.feature.ticket.routes
 
 import com.studystream.domain.model.Account
 import com.studystream.domain.security.Permission
-import com.studystream.domain.service.TicketService
+import com.studystream.domain.repository.TicketRepository
 import com.studystream.app.server.feature.ticket.Tickets
 import com.studystream.app.server.security.requireAccount
 import com.studystream.app.server.security.requirePermission
@@ -21,7 +21,7 @@ internal fun Route.installDeleteTicketRoute() {
             deleteTicket(
                 route = route,
                 account = call.requireAccount(),
-                ticketService = call.get(),
+                ticketRepository = call.get(),
             )
 
             call.respond(HttpStatusCode.NoContent)
@@ -32,15 +32,15 @@ internal fun Route.installDeleteTicketRoute() {
 suspend fun deleteTicket(
     route: Tickets.TicketId,
     account: Account,
-    ticketService: TicketService,
+    ticketRepository: TicketRepository,
 ) = endpoint {
-    val ticket = ticketService.getTicket(route.id).getOrThrow()
+    val ticket = ticketRepository.getTicket(route.id).getOrThrow()
 
     if (ticket.owner.idValue != account.idValue) {
         account.requirePermission(Permission.TICKETS_DELETE)
     }
 
-    ticketService
+    ticketRepository
         .deleteTicket(ticket = ticket)
         .getOrThrow()
 }

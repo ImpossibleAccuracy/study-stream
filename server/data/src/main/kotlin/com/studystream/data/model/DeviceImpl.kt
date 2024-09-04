@@ -11,7 +11,7 @@ import com.studystream.domain.model.Device
 import com.studystream.domain.model.Id
 import org.jetbrains.exposed.dao.id.EntityID
 
-abstract class DeviceImpl(id: EntityID<Id>) : Device, ModelImpl(id, DeviceTable) {
+class DeviceImpl(id: EntityID<Id>) : Device, ModelImpl(id, DeviceTable) {
     override var name: String? by DeviceTable.name
     override var token: String by DeviceTable.token
     override var type: Device.Type by DeviceTypeDao referencedOn DeviceTable.type asEnum DeviceTypeDao

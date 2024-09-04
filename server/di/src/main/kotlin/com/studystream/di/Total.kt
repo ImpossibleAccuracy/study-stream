@@ -1,6 +1,6 @@
 package com.studystream.di
 
-import com.studystream.di.utils.singlePropertiesOf
+import com.studystream.di.utils.singleMembersOf
 import com.studystream.domain.properties.AppProperties
 import org.koin.dsl.module
 import org.slf4j.Logger
@@ -8,13 +8,14 @@ import org.slf4j.Logger
 fun totalAppModules(properties: AppProperties, logger: Logger) = module {
     // Pass all properties from AppProperties to DI
     single { properties }
-    singlePropertiesOf(properties)
+    singleMembersOf(properties)
 
-    // Logger
+    // Pass app logger to DI
     single { logger }
 
     includes(
-        serviceModule,
         databaseModule,
+        dataSourceModule,
+        repositoryModule,
     )
 }

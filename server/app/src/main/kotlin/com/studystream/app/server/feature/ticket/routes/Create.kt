@@ -2,9 +2,9 @@ package com.studystream.app.server.feature.ticket.routes
 
 import com.studystream.domain.model.Account
 import com.studystream.domain.security.Permission
-import com.studystream.domain.service.AccountService
-import com.studystream.domain.service.ProfileService
-import com.studystream.domain.service.TicketService
+import com.studystream.domain.repository.AccountRepository
+import com.studystream.domain.repository.ProfileRepository
+import com.studystream.domain.repository.TicketRepository
 import com.studystream.app.server.feature.ticket.Tickets
 import com.studystream.app.server.mapper.toDto
 import com.studystream.app.server.security.choiceIdByPermission
@@ -26,9 +26,9 @@ internal fun Route.installCreateTicketRoute() {
             val result = createTicket(
                 body = call.receive(),
                 account = call.requireAccount(),
-                ticketService = call.get(),
-                accountService = call.get(),
-                profileService = call.get(),
+                ticketRepository = call.get(),
+                accountRepository = call.get(),
+                profileRepository = call.get(),
             )
 
             call.respond(result)
@@ -39,18 +39,18 @@ internal fun Route.installCreateTicketRoute() {
 suspend fun createTicket(
     body: CreateTicketRequest,
     account: Account,
-    ticketService: TicketService,
-    accountService: AccountService,
-    profileService: ProfileService,
+    ticketRepository: TicketRepository,
+    accountRepository: AccountRepository,
+    profileRepository: ProfileRepository,
 ): TicketDto = endpoint {
-    val creator = accountService
+    val creator = accountRepository
         .getAccount(id = account.choiceIdByPermission(Permission.TICKETS_CREATE, body.ownerId))
         .getOrThrow()
 
-    val profile = profileService.getProfile(body.profileId).getOrThrow()
-    val type = ticketService.getTicketType(body.typeId).getOrThrow()
+    val profile = profileRepository.getProfile(body.profileId).getOrThrow()
+    val type = ticketRepository.getTicketType(body.typeId).getOrThrow()
 
-    ticketService
+    ticketRepository
         .createTicket(
             owner = creator,
             profile = profile,

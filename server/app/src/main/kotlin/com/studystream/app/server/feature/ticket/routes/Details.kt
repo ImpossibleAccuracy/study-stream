@@ -2,7 +2,7 @@ package com.studystream.app.server.feature.ticket.routes
 
 import com.studystream.domain.model.Account
 import com.studystream.domain.security.Permission
-import com.studystream.domain.service.TicketService
+import com.studystream.domain.repository.TicketRepository
 import com.studystream.app.server.feature.ticket.Tickets
 import com.studystream.app.server.mapper.toDto
 import com.studystream.app.server.security.requireAccount
@@ -22,7 +22,7 @@ internal fun Route.installGetTicketDetailsRoute() {
             val result = getTicketDetails(
                 route = route,
                 account = call.requireAccount(),
-                ticketService = call.get(),
+                ticketRepository = call.get(),
             )
 
             call.respond(result)
@@ -33,9 +33,9 @@ internal fun Route.installGetTicketDetailsRoute() {
 suspend fun getTicketDetails(
     route: Tickets.TicketId,
     account: Account,
-    ticketService: TicketService,
+    ticketRepository: TicketRepository,
 ): TicketDto = endpoint {
-    ticketService
+    ticketRepository
         .getTicket(
             ticketId = route.id,
         )

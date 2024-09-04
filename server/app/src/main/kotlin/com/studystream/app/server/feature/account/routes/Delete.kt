@@ -2,7 +2,7 @@ package com.studystream.app.server.feature.account.routes
 
 import com.studystream.domain.model.Account
 import com.studystream.domain.security.Permission
-import com.studystream.domain.service.AccountService
+import com.studystream.domain.repository.AccountRepository
 import com.studystream.app.server.feature.account.Accounts
 import com.studystream.app.server.security.requireAccount
 import com.studystream.app.server.security.requirePermission
@@ -22,7 +22,7 @@ internal fun Routing.installDeleteAccountsRoute() {
             deleteAccount(
                 route = route,
                 account = call.requireAccount(),
-                accountService = call.get(),
+                accountRepository = call.get(),
             )
 
             call.respond(HttpStatusCode.NoContent)
@@ -33,11 +33,11 @@ internal fun Routing.installDeleteAccountsRoute() {
 suspend fun deleteAccount(
     route: Accounts.AccountId,
     account: Account,
-    accountService: AccountService,
+    accountRepository: AccountRepository,
 ) = endpoint {
     account.requirePermission(Permission.ACCOUNTS_DELETE)
 
-    accountService
+    accountRepository
         .deleteAccount(route.id)
         .getOrThrow()
 }

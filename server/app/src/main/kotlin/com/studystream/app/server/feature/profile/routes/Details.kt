@@ -2,7 +2,7 @@ package com.studystream.app.server.feature.profile.routes
 
 import com.studystream.domain.model.Account
 import com.studystream.domain.security.Permission
-import com.studystream.domain.service.ProfileService
+import com.studystream.domain.repository.ProfileRepository
 import com.studystream.app.server.feature.profile.Profiles
 import com.studystream.app.server.mapper.toDto
 import com.studystream.app.server.security.requireAccount
@@ -23,7 +23,7 @@ internal fun Routing.installGetProfileDetailsRoute() {
             val result = getProfileDetails(
                 route = route,
                 account = call.requireAccount(),
-                profileService = call.get(),
+                profileRepository = call.get(),
             )
 
             call.respond(result)
@@ -34,9 +34,9 @@ internal fun Routing.installGetProfileDetailsRoute() {
 suspend fun getProfileDetails(
     route: Profiles.ProfileId,
     account: Account,
-    profileService: ProfileService,
+    profileRepository: ProfileRepository,
 ): ProfileDto = endpoint {
-    profileService
+    profileRepository
         .getProfile(route.id)
         .getOrThrow()
         .also {

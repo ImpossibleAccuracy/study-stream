@@ -1,7 +1,7 @@
 package com.studystream.app.server.feature.auth.routes
 
-import com.studystream.domain.service.AuthService
-import com.studystream.domain.service.TokenService
+import com.studystream.domain.repository.AuthRepository
+import com.studystream.domain.repository.TokenRepository
 import com.studystream.app.server.feature.auth.AuthRoute
 import com.studystream.app.server.utils.endpoint
 import com.studystream.app.server.utils.typeSafePost
@@ -17,8 +17,8 @@ internal fun Routing.installSignUpRoute() {
     typeSafePost<AuthRoute.SignUpRoute> {
         val result = signUpRoute(
             body = call.receive(),
-            authService = call.get(),
-            tokenService = call.get(),
+            authRepository = call.get(),
+            tokenRepository = call.get(),
         )
 
         call.respond(result)
@@ -27,15 +27,15 @@ internal fun Routing.installSignUpRoute() {
 
 suspend fun signUpRoute(
     body: SignUpRequest,
-    authService: AuthService,
-    tokenService: TokenService,
+    authRepository: AuthRepository,
+    tokenRepository: TokenRepository,
 ): AuthResponse = endpoint {
-    val user = authService
+    val user = authRepository
         .signUp(body.username, body.password)
         .getOrThrow()
 
     AuthResponse(
         id = user.idValue,
-        token = tokenService.generate(user).getOrThrow(),
+        token = tokenRepository.generate(user).getOrThrow(),
     )
 }

@@ -2,7 +2,7 @@ package com.studystream.app.server.feature.ticket.routes.type
 
 import com.studystream.domain.model.Account
 import com.studystream.domain.security.Permission
-import com.studystream.domain.service.TicketService
+import com.studystream.domain.repository.TicketRepository
 import com.studystream.app.server.feature.ticket.Tickets
 import com.studystream.app.server.security.requireAccount
 import com.studystream.app.server.security.requirePermission
@@ -21,7 +21,7 @@ internal fun Route.installDeleteTicketTypeRoute() {
             deleteTicketType(
                 route = route,
                 account = call.requireAccount(),
-                ticketService = call.get(),
+                ticketRepository = call.get(),
             )
 
             call.respond(HttpStatusCode.NoContent)
@@ -32,13 +32,13 @@ internal fun Route.installDeleteTicketTypeRoute() {
 suspend fun deleteTicketType(
     route: Tickets.Types.TypeId,
     account: Account,
-    ticketService: TicketService,
+    ticketRepository: TicketRepository,
 ) = endpoint {
     account.requirePermission(Permission.TICKET_TYPES_DELETE)
 
-    ticketService
+    ticketRepository
         .deleteTicketType(
-            type = ticketService.getTicketType(route.id).getOrThrow()
+            type = ticketRepository.getTicketType(route.id).getOrThrow()
         )
         .getOrThrow()
 }

@@ -13,7 +13,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.jvmErasure
 
-inline fun <reified T : Any> Module.singlePropertiesOf(obj: T) {
+inline fun <reified T : Any> Module.singleMembersOf(obj: T) {
     T::class.memberProperties.forEach { kProperty ->
         val kClass = kProperty.returnType.jvmErasure
 

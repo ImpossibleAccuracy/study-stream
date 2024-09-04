@@ -3,8 +3,8 @@ package com.studystream.app.server.feature.profile.routes
 import com.studystream.domain.exception.InvalidInputException
 import com.studystream.domain.model.Account
 import com.studystream.domain.security.Permission
-import com.studystream.domain.service.AccountService
-import com.studystream.domain.service.ProfileService
+import com.studystream.domain.repository.AccountRepository
+import com.studystream.domain.repository.ProfileRepository
 import com.studystream.app.server.feature.profile.Profiles
 import com.studystream.app.server.mapper.toDto
 import com.studystream.app.server.security.choiceIdByPermission
@@ -26,8 +26,8 @@ internal fun Routing.installCreateProfileRoute() {
             val result = createProfile(
                 body = call.receive(),
                 account = call.requireAccount(),
-                profileService = call.get(),
-                accountService = call.get(),
+                profileRepository = call.get(),
+                accountRepository = call.get(),
             )
 
             call.respond(result)
@@ -38,10 +38,10 @@ internal fun Routing.installCreateProfileRoute() {
 suspend fun createProfile(
     body: CreateProfileRequest,
     account: Account,
-    profileService: ProfileService,
-    accountService: AccountService,
+    profileRepository: ProfileRepository,
+    accountRepository: AccountRepository,
 ): ProfileDto = endpoint {
-    val profileAccount = accountService
+    val profileAccount = accountRepository
         .getAccount(
             account.choiceIdByPermission(
                 permission = Permission.PROFILES_CREATE,
@@ -50,7 +50,7 @@ suspend fun createProfile(
         )
         .getOrThrow()
 
-    if (profileService.existsProfile(
+    if (profileRepository.existsProfile(
             accountId = profileAccount.idValue,
             name = body.name,
             surname = body.surname,
@@ -60,7 +60,7 @@ suspend fun createProfile(
         throw InvalidInputException("Profile with such name already exists")
     }
 
-    profileService
+    profileRepository
         .createProfile(
             owner = profileAccount,
             name = body.name,

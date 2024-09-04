@@ -2,7 +2,7 @@ package com.studystream.app.server.feature.account.routes
 
 import com.studystream.domain.model.Account
 import com.studystream.domain.security.Permission
-import com.studystream.domain.service.AccountService
+import com.studystream.domain.repository.AccountRepository
 import com.studystream.app.server.feature.account.Accounts
 import com.studystream.app.server.mapper.toDto
 import com.studystream.app.server.security.requireAccount
@@ -27,7 +27,7 @@ internal fun Routing.installUpdateAccountsRoute() {
                 route = route,
                 account = call.requireAccount(),
                 body = LazyBody { call.receive() },
-                accountService = call.get(),
+                accountRepository = call.get(),
             )
 
             call.respond(result)
@@ -39,11 +39,11 @@ suspend fun updateAccount(
     route: Accounts.AccountId,
     account: Account,
     body: LazyBody<UpdateAccountRequest>,
-    accountService: AccountService,
+    accountRepository: AccountRepository,
 ): AccountDto = endpoint {
     account.requirePermission(Permission.ACCOUNTS_UPDATE)
 
-    accountService
+    accountRepository
         .updateAccount(route.id, body().username)
         .getOrThrow()
         .toDto()

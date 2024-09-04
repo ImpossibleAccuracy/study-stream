@@ -2,7 +2,7 @@ package com.studystream.app.server.feature.profile.routes.avatar
 
 import com.studystream.domain.model.Account
 import com.studystream.domain.security.Permission
-import com.studystream.domain.service.ProfileService
+import com.studystream.domain.repository.ProfileRepository
 import com.studystream.app.server.feature.profile.Profiles
 import com.studystream.app.server.security.requireAccount
 import com.studystream.app.server.security.requirePermission
@@ -21,7 +21,7 @@ internal fun Routing.installDeleteProfileAvatarRoute() {
             deleteProfileAvatar(
                 route = route,
                 account = call.requireAccount(),
-                profileService = call.get(),
+                profileRepository = call.get(),
             )
 
             call.respond(HttpStatusCode.NoContent)
@@ -32,15 +32,15 @@ internal fun Routing.installDeleteProfileAvatarRoute() {
 suspend fun deleteProfileAvatar(
     route: Profiles.ProfileId.Avatar,
     account: Account,
-    profileService: ProfileService,
+    profileRepository: ProfileRepository,
 ) = endpoint {
-    val profile = profileService.getProfile(route.parent.id).getOrThrow()
+    val profile = profileRepository.getProfile(route.parent.id).getOrThrow()
 
     if (profile.account.idValue != account.idValue) {
         account.requirePermission(Permission.PROFILES_UPDATE)
     }
 
-    profileService
+    profileRepository
         .updateAvatar(
             profile = profile,
             avatar = null,

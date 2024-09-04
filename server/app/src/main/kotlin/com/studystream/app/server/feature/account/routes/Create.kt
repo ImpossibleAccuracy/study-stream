@@ -2,7 +2,7 @@ package com.studystream.app.server.feature.account.routes
 
 import com.studystream.domain.model.Account
 import com.studystream.domain.security.Permission
-import com.studystream.domain.service.AuthService
+import com.studystream.domain.repository.AuthRepository
 import com.studystream.app.server.feature.account.Accounts
 import com.studystream.app.server.mapper.toDto
 import com.studystream.app.server.security.requireAccount
@@ -25,7 +25,7 @@ internal fun Routing.installCreateAccountRoute() {
             val result = createAccount(
                 body = LazyBody { call.receive() },
                 account = call.requireAccount(),
-                authService = call.get(),
+                authRepository = call.get(),
             )
 
             call.respond(result)
@@ -36,11 +36,11 @@ internal fun Routing.installCreateAccountRoute() {
 suspend fun createAccount(
     body: LazyBody<CreateAccountRequest>,
     account: Account,
-    authService: AuthService,
+    authRepository: AuthRepository,
 ): AccountDto = endpoint {
     account.requirePermission(Permission.ACCOUNTS_CREATE)
 
-    authService
+    authRepository
         .signUp(body().username, body().password)
         .getOrThrow()
         .toDto()

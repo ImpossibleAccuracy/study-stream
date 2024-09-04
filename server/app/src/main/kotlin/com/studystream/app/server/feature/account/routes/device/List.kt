@@ -2,7 +2,7 @@ package com.studystream.app.server.feature.account.routes.device
 
 import com.studystream.domain.model.Account
 import com.studystream.domain.security.Permission
-import com.studystream.domain.service.DeviceService
+import com.studystream.domain.repository.DeviceRepository
 import com.studystream.app.server.feature.account.Accounts
 import com.studystream.app.server.mapper.fromDto
 import com.studystream.app.server.mapper.toDto
@@ -24,7 +24,7 @@ internal fun Routing.installGetDevicesListRoute() {
             val result = getDevicesList(
                 route = route,
                 account = call.requireAccount(),
-                deviceService = call.get(),
+                deviceRepository = call.get(),
             )
 
             call.respond(result)
@@ -35,11 +35,11 @@ internal fun Routing.installGetDevicesListRoute() {
 suspend fun getDevicesList(
     route: Accounts.Device.List,
     account: Account,
-    deviceService: DeviceService,
+    deviceRepository: DeviceRepository,
 ): List<DeviceDto> = endpoint {
-    deviceService
+    deviceRepository
         .getDevices(
-            filters = DeviceService.Filters(
+            filters = DeviceRepository.Filters(
                 ownerId = account.choiceIdByPermission(Permission.DEVICES_READ, route.ownerId),
                 deviceType = route.deviceType.fromDto().nullIfNotSpecified(),
             )

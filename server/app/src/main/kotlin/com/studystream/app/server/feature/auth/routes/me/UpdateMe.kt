@@ -1,7 +1,7 @@
 package com.studystream.app.server.feature.auth.routes.me
 
 import com.studystream.domain.model.Account
-import com.studystream.domain.service.AccountService
+import com.studystream.domain.repository.AccountRepository
 import com.studystream.app.server.feature.auth.AuthRoute
 import com.studystream.app.server.mapper.toDto
 import com.studystream.app.server.security.requireAccount
@@ -24,7 +24,7 @@ internal fun Routing.installUpdateMeRoute() {
             val result = updateMeRoute(
                 account = account,
                 data = call.receive(),
-                accountService = call.get()
+                accountRepository = call.get()
             )
 
             call.respond(result)
@@ -35,9 +35,9 @@ internal fun Routing.installUpdateMeRoute() {
 suspend fun updateMeRoute(
     account: Account,
     data: UpdateAccountRequest,
-    accountService: AccountService,
+    accountRepository: AccountRepository,
 ): AccountDto = endpoint {
-    accountService
+    accountRepository
         .updateAccount(
             id = account.idValue,
             username = data.username

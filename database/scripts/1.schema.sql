@@ -153,7 +153,7 @@ CREATE TABLE `ticket` (
   `id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP,
-  `creator_id` int NOT NULL,
+  `owner_id` int NOT NULL,
   `profile_id` int NOT NULL,
   `type_id` int NOT NULL,
   `activated_at` datetime,
@@ -231,7 +231,7 @@ ALTER TABLE `event_exception` ADD FOREIGN KEY (`type_id`) REFERENCES `event_exce
 
 ALTER TABLE `ticket_type` ADD FOREIGN KEY (`creator_id`) REFERENCES `account` (`id`) ON DELETE RESTRICT;
 
-ALTER TABLE `ticket` ADD FOREIGN KEY (`creator_id`) REFERENCES `account` (`id`) ON DELETE CASCADE;
+ALTER TABLE `ticket` ADD FOREIGN KEY (`owner_id`) REFERENCES `account` (`id`) ON DELETE CASCADE;
 
 ALTER TABLE `ticket` ADD FOREIGN KEY (`profile_id`) REFERENCES `profile` (`id`) ON DELETE CASCADE;
 

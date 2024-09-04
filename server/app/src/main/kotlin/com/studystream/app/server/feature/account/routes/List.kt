@@ -2,7 +2,7 @@ package com.studystream.app.server.feature.account.routes
 
 import com.studystream.domain.model.Account
 import com.studystream.domain.security.Permission
-import com.studystream.domain.service.AccountService
+import com.studystream.domain.repository.AccountRepository
 import com.studystream.app.server.feature.account.Accounts
 import com.studystream.app.server.mapper.toDto
 import com.studystream.app.server.security.requireAccount
@@ -22,7 +22,7 @@ internal fun Routing.installGetAccountsListRoute() {
         typeSafeGet<Accounts.List> {
             val result = getAccountsList(
                 account = call.requireAccount(),
-                accountService = call.get(),
+                accountRepository = call.get(),
             )
 
             call.respond(result)
@@ -32,11 +32,11 @@ internal fun Routing.installGetAccountsListRoute() {
 
 suspend fun getAccountsList(
     account: Account,
-    accountService: AccountService,
+    accountRepository: AccountRepository,
 ): List<AccountDto> = endpoint {
     account.requirePermission(Permission.ACCOUNTS_READ)
 
-    accountService
+    accountRepository
         .getAccounts()
         .map { it.toDto() }
 }

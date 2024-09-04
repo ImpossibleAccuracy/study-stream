@@ -3,7 +3,7 @@ package com.studystream.app.server.feature.ticket.routes
 import com.studystream.domain.model.Account
 import com.studystream.domain.model.Id
 import com.studystream.domain.security.Permission
-import com.studystream.domain.service.TicketService
+import com.studystream.domain.repository.TicketRepository
 import com.studystream.app.server.feature.ticket.Tickets
 import com.studystream.app.server.mapper.toDto
 import com.studystream.app.server.security.hasPermission
@@ -26,7 +26,7 @@ internal fun Routing.installGetTicketsListRoute() {
                 profileId = route.profileId,
                 typeId = route.typeId,
                 account = call.requireAccount(),
-                ticketService = call.get(),
+                ticketRepository = call.get(),
             )
 
             call.respond(result)
@@ -39,11 +39,11 @@ suspend fun getTicketsList(
     profileId: Id?,
     typeId: Id?,
     account: Account,
-    ticketService: TicketService,
+    ticketRepository: TicketRepository,
 ): List<TicketDto> = endpoint {
-    ticketService
+    ticketRepository
         .getTickets(
-            filters = TicketService.Filters(
+            filters = TicketRepository.Filters(
                 ownerId = when {
                     ownerId == null || account.hasPermission(Permission.TICKETS_READ) -> ownerId
                     else -> account.idValue

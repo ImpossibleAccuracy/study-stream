@@ -2,7 +2,7 @@ package com.studystream.app.server.feature.ticket.routes.type
 
 import com.studystream.domain.model.Account
 import com.studystream.domain.security.Permission
-import com.studystream.domain.service.TicketService
+import com.studystream.domain.repository.TicketRepository
 import com.studystream.app.server.feature.ticket.Tickets
 import com.studystream.app.server.mapper.toDto
 import com.studystream.app.server.security.requireAccount
@@ -25,7 +25,7 @@ internal fun Route.installUpdateTicketTypeRoute() {
                 route = route,
                 account = call.requireAccount(),
                 body = call.receive<UpsertTicketTypeRequest>(),
-                ticketService = call.get(),
+                ticketRepository = call.get(),
             )
 
             call.respond(result)
@@ -37,13 +37,13 @@ suspend fun updateTicketType(
     route: Tickets.Types.TypeId,
     account: Account,
     body: UpsertTicketTypeRequest,
-    ticketService: TicketService,
+    ticketRepository: TicketRepository,
 ): TicketTypeDto = endpoint {
     account.requirePermission(Permission.TICKET_TYPES_UPDATE)
 
-    ticketService
+    ticketRepository
         .updateTicketType(
-            type = ticketService.getTicketType(route.id).getOrThrow(),
+            type = ticketRepository.getTicketType(route.id).getOrThrow(),
             title = body.title,
             description = body.description,
             totalEvents = body.totalEvents,

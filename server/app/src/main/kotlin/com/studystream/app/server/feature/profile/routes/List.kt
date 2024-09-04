@@ -2,7 +2,7 @@ package com.studystream.app.server.feature.profile.routes
 
 import com.studystream.domain.model.Account
 import com.studystream.domain.security.Permission
-import com.studystream.domain.service.ProfileService
+import com.studystream.domain.repository.ProfileRepository
 import com.studystream.app.server.feature.profile.Profiles
 import com.studystream.app.server.mapper.toDto
 import com.studystream.app.server.security.hasPermission
@@ -23,7 +23,7 @@ internal fun Routing.installGetProfilesListRoute() {
             val result = getProfilesList(
                 route = route,
                 account = call.requireAccount(),
-                profileService = call.get(),
+                profileRepository = call.get(),
             )
 
             call.respond(result)
@@ -34,14 +34,14 @@ internal fun Routing.installGetProfilesListRoute() {
 suspend fun getProfilesList(
     route: Profiles.List,
     account: Account,
-    profileService: ProfileService,
+    profileRepository: ProfileRepository,
 ): List<ProfileDto> = endpoint {
     val canReadAllProfiles = account.hasPermission(Permission.PROFILES_READ)
 
     val items = if (route.ownerId == null && canReadAllProfiles) {
-        profileService.getProfiles()
+        profileRepository.getProfiles()
     } else {
-        profileService.getProfilesByOwner(
+        profileRepository.getProfilesByOwner(
             ownerId = when {
                 canReadAllProfiles -> route.ownerId ?: account.idValue
                 else -> account.idValue

@@ -5,8 +5,8 @@ import com.studystream.domain.model.Account
 import com.studystream.domain.model.MultipartFile
 import com.studystream.domain.model.StorageCatalog
 import com.studystream.domain.security.Permission
-import com.studystream.domain.service.FileStorageService
-import com.studystream.domain.service.ProfileService
+import com.studystream.domain.repository.FileStorageRepository
+import com.studystream.domain.repository.ProfileRepository
 import com.studystream.app.server.feature.profile.Profiles
 import com.studystream.app.server.security.requireAccount
 import com.studystream.app.server.security.requirePermission
@@ -33,8 +33,8 @@ internal fun Routing.installUpdateProfileAvatarRoute() {
                     ?: throw InvalidInputException("No avatar presented"),
                 route = route,
                 account = call.requireAccount(),
-                profileService = call.get(),
-                fileStorageService = call.get(),
+                profileRepository = call.get(),
+                fileStorageRepository = call.get(),
             )
 
             call.respond(HttpStatusCode.Created)
@@ -46,27 +46,27 @@ suspend fun updateProfileAvatar(
     avatar: MultipartFile,
     route: Profiles.ProfileId.Avatar,
     account: Account,
-    profileService: ProfileService,
-    fileStorageService: FileStorageService,
+    profileRepository: ProfileRepository,
+    fileStorageRepository: FileStorageRepository,
 ) = endpoint {
-    val profile = profileService.getProfile(route.parent.id).getOrThrow()
+    val profile = profileRepository.getProfile(route.parent.id).getOrThrow()
 
     if (profile.account.idValue != account.idValue) {
         account.requirePermission(Permission.PROFILES_UPDATE)
     }
 
-    val avatarDocument = fileStorageService
+    val avatarDocument = fileStorageRepository
         .store(avatar, StorageCatalog.Temp)
         .getOrThrow()
 
     // TODO: add permissions check
-    profileService
+    profileRepository
         .updateAvatar(
             profile = profile,
             avatar = avatarDocument,
         )
         .onSuccess {
-            fileStorageService.move(avatarDocument, StorageCatalog.Regular).getOrThrow()
+            fileStorageRepository.move(avatarDocument, StorageCatalog.Regular).getOrThrow()
         }
         .getOrThrow()
 }

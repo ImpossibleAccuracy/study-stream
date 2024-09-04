@@ -2,8 +2,8 @@ package com.studystream.app.server.feature.ticket.routes
 
 import com.studystream.domain.model.Account
 import com.studystream.domain.security.Permission
-import com.studystream.domain.service.ProfileService
-import com.studystream.domain.service.TicketService
+import com.studystream.domain.repository.ProfileRepository
+import com.studystream.domain.repository.TicketRepository
 import com.studystream.app.server.feature.ticket.Tickets
 import com.studystream.app.server.mapper.toDto
 import com.studystream.app.server.security.requireAccount
@@ -26,8 +26,8 @@ internal fun Route.installUpdateTicketRoute() {
                 route = route,
                 account = call.requireAccount(),
                 body = call.receive(),
-                ticketService = call.get(),
-                profileService = call.get(),
+                ticketRepository = call.get(),
+                profileRepository = call.get(),
             )
 
             call.respond(result)
@@ -39,20 +39,20 @@ suspend fun updateTicket(
     route: Tickets.TicketId,
     account: Account,
     body: UpdateTicketRequest,
-    ticketService: TicketService,
-    profileService: ProfileService,
+    ticketRepository: TicketRepository,
+    profileRepository: ProfileRepository,
 ): TicketDto = endpoint {
-    val ticket = ticketService.getTicket(route.id).getOrThrow()
+    val ticket = ticketRepository.getTicket(route.id).getOrThrow()
 
     if (ticket.owner.idValue != account.idValue) {
         account.requirePermission(Permission.TICKETS_UPDATE)
     }
 
-    ticketService
+    ticketRepository
         .updateTicket(
             ticket = ticket,
-            profile = profileService.getProfile(body.profileId).getOrThrow(),
-            type = ticketService.getTicketType(body.typeId).getOrThrow(),
+            profile = profileRepository.getProfile(body.profileId).getOrThrow(),
+            type = ticketRepository.getTicketType(body.typeId).getOrThrow(),
             isActivated = body.isActivated ?: (ticket.activatedAt != null),
         )
         .getOrThrow()

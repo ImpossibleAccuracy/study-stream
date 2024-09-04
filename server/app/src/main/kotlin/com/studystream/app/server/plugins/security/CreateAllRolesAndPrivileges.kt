@@ -1,7 +1,7 @@
 package com.studystream.app.server.plugins.security
 
 import com.studystream.domain.coroutines.backgroundScope
-import com.studystream.domain.service.SecurityService
+import com.studystream.domain.repository.SecurityRepository
 import io.ktor.server.application.*
 import io.ktor.util.logging.*
 import kotlinx.coroutines.launch
@@ -9,7 +9,7 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 import org.koin.ktor.ext.get
 
 fun Application.createAllRolesAndPrivileges() {
-    val securityRepository = get<SecurityService>()
+    val securityRepository = get<SecurityRepository>()
     val logger = get<Logger>()
 
     backgroundScope.launch {
