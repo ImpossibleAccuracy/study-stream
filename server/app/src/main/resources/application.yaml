@@ -10,12 +10,12 @@ ktor:
       - resources
 
 jwt:
-  secret: "$JWT_SECRET:secret"
-  issuer: "$JWT_ISSUER:http://0.0.0.0:8080/"
-  audience: "$JWT_AUDIENCE:http://0.0.0.0:8080/hello"
-  realm: "$JWT_REALM:Access to API"
+  secret: "$JWT_SECRET"
+  issuer: "$JWT_ISSUER"
+  audience: "$JWT_AUDIENCE"
+  realm: "$JWT_REALM"
   claimName: "username"
-  ttl: "$JWT_TTL:3600000"
+  ttl: "$JWT_TTL"
 
 database:
   url: "$DATABASE_URL"
@@ -28,7 +28,7 @@ feature:
     tokenRefreshThreshold: 3600000
 
 store:
-  temp: "$TEMP_FILES"
-  regular: "$FILE_STORE"
+  temp: "$TEMP_FILES_PATH"
+  regular: "$FILE_STORE_PATH"
   namingPattern: "{FILE_NAME}_{FILE_HASH}_{TIMESTAMP}_.{EXTENSION}"
   maxFilenameLength: 255
