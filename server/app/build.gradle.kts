@@ -34,7 +34,6 @@ dependencies {
     implementation(libs.ktor.auth)
     implementation(libs.ktor.authJwt)
     implementation(libs.ktor.websockets)
-    implementation(libs.ktor.metrics)
     implementation(libs.ktor.callLoging)
 
     implementation(libs.koin.core)
