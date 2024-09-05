@@ -10,9 +10,9 @@ object Modules {
         private const val Base = ":server"
 
         const val App = "$Base:app"
-        const val Domain = "$Base:core:domain"
-        const val Data = "$Base:core:data"
-        const val Di = "$Base:core:di"
+        const val Domain = "$Base:domain"
+        const val Data = "$Base:data"
+        const val Di = "$Base:di"
 
         object Plugin {
             private const val Base = "${Server.Base}:plugin"
