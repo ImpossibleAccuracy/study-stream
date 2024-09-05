@@ -17,7 +17,4 @@ dependencies {
     implementation(libs.exposed.datetime)
     implementation(libs.mysqlConnector)
     implementation(libs.hikariCP)
-
-//    implementation(libs.log4j.core)
-//    implementation(libs.log4j.impl)
 }

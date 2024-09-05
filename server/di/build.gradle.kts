@@ -5,10 +5,6 @@ plugins {
 group = AppConfig.buildGroup("di")
 version = AppConfig.VERSION_NAME
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     implementation(project(Modules.Shared.Payload))
     implementation(project(Modules.Server.Domain))

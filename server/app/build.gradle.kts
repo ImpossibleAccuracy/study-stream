@@ -14,10 +14,6 @@ application {
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
 }
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     implementation(project(Modules.Shared.Payload))
     implementation(project(Modules.Server.Domain))
